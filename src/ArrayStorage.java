@@ -6,7 +6,9 @@ public class ArrayStorage {
     int size = 0;
 
     void clear() {
-        for (int i = 0; i < size; i++) storage[i] = null;
+        for (int i = 0; i < size; i++) {
+            storage[i] = null;
+        }
         size = 0;
     }
 
@@ -25,6 +27,9 @@ public class ArrayStorage {
     }
 
     void delete(String uuid) {
+        if (size == 0) {
+            return;
+        }
         for (int i = 0; i < size; i++) {
             if (storage[i].uuid.equals(uuid)) {
                 for (int j = i; j < size - 1; j++) {
@@ -40,9 +45,10 @@ public class ArrayStorage {
      * @return array, contains only Resumes in storage (without null)
      */
     Resume[] getAll() {
-        if (size == 0) return new Resume[0];
         Resume[] resumes = new Resume[size];
-        for (int i = 0; i < size; i++) resumes[i] = storage[i];
+        for (int i = 0; i < size; i++) {
+            resumes[i] = storage[i];
+        }
         return resumes;
     }
 
