@@ -6,24 +6,13 @@ import com.urise.webapp.model.Resume;
  * Array based storage for Resumes
  */
 public class ArrayStorage {
-    private Resume[] storage = new Resume[10000];
+    private Resume[] storage = new Resume[10_000];
     private int size = 0;
-
-    //проверка на наличие resume в storage
-    public boolean isPresent(String uuid) {
-        Resume r = new Resume();
-        r.setUuid(uuid);
-        boolean result = false;
-        if (resumeFind(uuid) >= 0) {
-            result = true;
-        }
-        return result;
-    }
 
     //проверка storage на переполнение
     public boolean isOverflow() {
         boolean result = false;
-        if (size == 10000) {
+        if (size == 10_000) {
             result = true;
         }
         return result;
@@ -53,43 +42,45 @@ public class ArrayStorage {
 
     //обновление resume, которое имеется в storage
     public void update(Resume r) {
-        if (isPresent(r.getUuid())) {
-              storage[resumeFind(r.getUuid())] = r;
+        if (resumeFind(r.getUuid()) >= 0) {
+            storage[resumeFind(r.getUuid())] = r;
+        } else {
+            System.out.println("ERROR: невозможно обновить \"" + r.getUuid() + "\", такого резюме нет в базе");
         }
     }
 
     //сохранение нового resume в storage
     public void save(Resume r) {
         if (!isOverflow()) {
-            if (!isPresent(r.getUuid())) {
+            if (resumeFind(r.getUuid()) == -1) {
                 storage[size] = r;
                 size++;
             } else {
-                System.out.println("ERROR: невозможно сохранить, такое резюме есть в базе");
+                System.out.println("ERROR: невозможно сохранить \"" + r.getUuid() + "\", такое резюме есть в базе");
             }
-        } else{
-            System.out.println("ERROR: невозможно сохранить, база резюме заполнена полностью");
+        } else {
+            System.out.println("ERROR: невозможно сохранить \"" + r.getUuid() + "\", база резюме заполнена полностью");
         }
     }
 
     //получение resume из storage
     public Resume get(String uuid) {
-        if (isPresent(uuid)) {
+        if (resumeFind(uuid) >= 0) {
             return storage[resumeFind(uuid)];
         } else {
-            System.out.println("ERROR: невозможно получить, такого резюме нет в базе");
+            System.out.println("ERROR: невозможно получить \"" + uuid + "\", такого резюме нет в базе");
         }
         return null;
     }
 
     //удаление resume из storage
     public void delete(String uuid) {
-        if (isPresent(uuid)) {
+        if (resumeFind(uuid) >= 0) {
             storage[resumeFind(uuid)] = storage[size - 1];
             storage[size - 1] = null;
             size--;
         } else {
-            System.out.println("ERROR: невозможно удалить, такого резюме нет в базе");
+            System.out.println("ERROR: невозможно удалить \"" + uuid + "\", такого резюме нет в базе");
         }
 
     }
@@ -100,9 +91,7 @@ public class ArrayStorage {
     //получение всех resume из storage
     public Resume[] getAll() {
         Resume[] resumes = new Resume[size];
-        for (int i = 0; i < size; i++) {
-            resumes[i] = storage[i];
-        }
+        if (size >= 0) System.arraycopy(storage, 0, resumes, 0, size);
         return resumes;
     }
 
