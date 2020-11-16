@@ -2,6 +2,8 @@ package com.urise.webapp.storage;
 
 import com.urise.webapp.model.Resume;
 
+import java.util.Arrays;
+
 /**
  * Array based storage for Resumes
  */
@@ -9,74 +11,55 @@ public class ArrayStorage {
     private Resume[] storage = new Resume[10_000];
     private int size = 0;
 
-    //проверка storage на переполнение
-    public boolean isOverflow() {
-        boolean result = false;
-        if (size == 10_000) {
-            result = true;
-        }
-        return result;
-    }
-
-    //поиск позиции resume в storage
-    public int resumeFind(String uuid) {
-        Resume r = new Resume();
-        r.setUuid(uuid);
-        int result = -1;
-        for (int i = 0; i < size; i++) {
-            if (storage[i].getUuid().equals(r.getUuid())) {
-                result = i;
-                break;
-            }
-        }
-        return result;
-    }
-
     //полная очистка storage
     public void clear() {
-        for (int i = 0; i < size; i++) {
-            storage[i] = null;
-        }
+        Arrays.fill(storage, null);
         size = 0;
     }
 
     //обновление resume, которое имеется в storage
-    public void update(Resume r) {
-        if (resumeFind(r.getUuid()) >= 0) {
-            storage[resumeFind(r.getUuid())] = r;
+    public void update(Resume resume) {
+        int index = findResume(resume.getUuid());
+        if (index >= 0) {
+            storage[index] = resume;
         } else {
-            System.out.println("ERROR: невозможно обновить \"" + r.getUuid() + "\", такого резюме нет в базе");
+            System.out.println("ERROR: невозможно обновить \"" + resume.getUuid() + "\", такого резюме нет в базе");
         }
     }
 
     //сохранение нового resume в storage
-    public void save(Resume r) {
-        if (!isOverflow()) {
-            if (resumeFind(r.getUuid()) == -1) {
-                storage[size] = r;
+    public void save(Resume resume) {
+        boolean isOverflowed = false;
+        if (size == 10_000) {
+            isOverflowed = true;
+        }
+        if (!isOverflowed) {
+            if (findResume(resume.getUuid()) == -1) {
+                storage[size] = resume;
                 size++;
             } else {
-                System.out.println("ERROR: невозможно сохранить \"" + r.getUuid() + "\", такое резюме есть в базе");
+                System.out.println("ERROR: невозможно сохранить \"" + resume.getUuid() + "\", такое резюме есть в базе");
             }
         } else {
-            System.out.println("ERROR: невозможно сохранить \"" + r.getUuid() + "\", база резюме заполнена полностью");
+            System.out.println("ERROR: невозможно сохранить \"" + resume.getUuid() + "\", база резюме заполнена полностью");
         }
     }
 
     //получение resume из storage
     public Resume get(String uuid) {
-        if (resumeFind(uuid) >= 0) {
-            return storage[resumeFind(uuid)];
-        } else {
-            System.out.println("ERROR: невозможно получить \"" + uuid + "\", такого резюме нет в базе");
+        int index = findResume(uuid);
+        if (index >= 0) {
+            return storage[index];
         }
+        System.out.println("ERROR: невозможно получить \"" + uuid + "\", такого резюме нет в базе");
         return null;
     }
 
     //удаление resume из storage
     public void delete(String uuid) {
-        if (resumeFind(uuid) >= 0) {
-            storage[resumeFind(uuid)] = storage[size - 1];
+        int index = findResume(uuid);
+        if (index >= 0) {
+            storage[index] = storage[size - 1];
             storage[size - 1] = null;
             size--;
         } else {
@@ -98,5 +81,17 @@ public class ArrayStorage {
     //получение количества resume в storage
     public int size() {
         return size;
+    }
+
+    //поиск позиции resume в storage
+    private int findResume(String uuid) {
+        int index = -1;
+        for (int i = 0; i < size; i++) {
+            if (storage[i].getUuid().equals(uuid)) {
+                index = i;
+                break;
+            }
+        }
+        return index;
     }
 }
