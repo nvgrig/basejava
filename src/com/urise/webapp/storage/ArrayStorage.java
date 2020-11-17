@@ -13,7 +13,7 @@ public class ArrayStorage {
 
     //полная очистка storage
     public void clear() {
-        Arrays.fill(storage, null);
+        Arrays.fill(storage, 0, size - 1, null);
         size = 0;
     }
 
@@ -29,11 +29,7 @@ public class ArrayStorage {
 
     //сохранение нового resume в storage
     public void save(Resume resume) {
-        boolean isOverflowed = false;
-        if (size == 10_000) {
-            isOverflowed = true;
-        }
-        if (!isOverflowed) {
+        if (size != storage.length) {
             if (findResume(resume.getUuid()) == -1) {
                 storage[size] = resume;
                 size++;
