@@ -13,7 +13,7 @@ public class ArrayStorage {
 
     //полная очистка storage
     public void clear() {
-        Arrays.fill(storage, 0, size - 1, null);
+        Arrays.fill(storage, 0, size, null);
         size = 0;
     }
 
@@ -70,7 +70,7 @@ public class ArrayStorage {
     //получение всех resume из storage
     public Resume[] getAll() {
         Resume[] resumes = new Resume[size];
-        if (size >= 0) System.arraycopy(storage, 0, resumes, 0, size);
+        if (size > 0) System.arraycopy(storage, 0, resumes, 0, size);
         return resumes;
     }
 
