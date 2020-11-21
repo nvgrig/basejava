@@ -33,7 +33,7 @@ public abstract class AbstractArrayStorage implements Storage {
 
     //получение resume из storage
     public Resume get(String uuid) {
-        int index = findResume(uuid);
+        int index = getIndex(uuid);
         if (index >= 0) {
             return storage[index];
         }
@@ -42,5 +42,5 @@ public abstract class AbstractArrayStorage implements Storage {
     }
 
     //поиск позиции resume в storage
-    protected abstract int findResume(String uuid);
+    protected abstract int getIndex(String uuid);
 }

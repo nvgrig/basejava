@@ -11,7 +11,7 @@ public class ArrayStorage extends AbstractArrayStorage{
 
     //обновление resume, которое имеется в storage
     public void update(Resume resume) {
-        int index = findResume(resume.getUuid());
+        int index = getIndex(resume.getUuid());
         if (index >= 0) {
             storage[index] = resume;
         } else {
@@ -22,7 +22,7 @@ public class ArrayStorage extends AbstractArrayStorage{
     //сохранение нового resume в storage
     public void save(Resume resume) {
         if (size != storage.length) {
-            if (findResume(resume.getUuid()) == -1) {
+            if (getIndex(resume.getUuid()) == -1) {
                 storage[size] = resume;
                 size++;
             } else {
@@ -35,7 +35,7 @@ public class ArrayStorage extends AbstractArrayStorage{
 
     //получение resume из storage
     public Resume get(String uuid) {
-        int index = findResume(uuid);
+        int index = getIndex(uuid);
         if (index >= 0) {
             return storage[index];
         }
@@ -45,7 +45,7 @@ public class ArrayStorage extends AbstractArrayStorage{
 
     //удаление resume из storage
     public void delete(String uuid) {
-        int index = findResume(uuid);
+        int index = getIndex(uuid);
         if (index >= 0) {
             storage[index] = storage[size - 1];
             storage[size - 1] = null;
@@ -57,7 +57,7 @@ public class ArrayStorage extends AbstractArrayStorage{
     }
 
     //поиск позиции resume в storage
-    protected int findResume(String uuid) {
+    protected int getIndex(String uuid) {
         int index = -1;
         for (int i = 0; i < size; i++) {
             if (storage[i].getUuid().equals(uuid)) {
