@@ -2,20 +2,12 @@ package ru.javawebinar.basejava.storage;
 
 import ru.javawebinar.basejava.model.Resume;
 
-import java.util.Arrays;
-
 /**
  * Array based storage for Resumes
  */
 public class ArrayStorage extends AbstractArrayStorage{
     private Resume[] storage = new Resume[10_000];
     private int size = 0;
-
-    //полная очистка storage
-    public void clear() {
-        Arrays.fill(storage, 0, size, null);
-        size = 0;
-    }
 
     //обновление resume, которое имеется в storage
     public void update(Resume resume) {
@@ -62,21 +54,6 @@ public class ArrayStorage extends AbstractArrayStorage{
             System.out.println("ERROR: невозможно удалить \"" + uuid + "\", такого резюме нет в базе");
         }
 
-    }
-
-    /**
-     * @return array, contains only Resumes in storage (without null)
-     */
-    //получение всех resume из storage
-    public Resume[] getAll() {
-        Resume[] resumes = new Resume[size];
-        if (size > 0) System.arraycopy(storage, 0, resumes, 0, size);
-        return resumes;
-    }
-
-    //получение количества resume в storage
-    public int size() {
-        return size;
     }
 
     //поиск позиции resume в storage
