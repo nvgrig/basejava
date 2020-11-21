@@ -7,7 +7,7 @@ import java.util.Arrays;
 /**
  * Array based storage for Resumes
  */
-public class ArrayStorage {
+public class ArrayStorage extends AbstractArrayStorage{
     private Resume[] storage = new Resume[10_000];
     private int size = 0;
 
@@ -80,7 +80,7 @@ public class ArrayStorage {
     }
 
     //поиск позиции resume в storage
-    private int findResume(String uuid) {
+    protected int findResume(String uuid) {
         int index = -1;
         for (int i = 0; i < size; i++) {
             if (storage[i].getUuid().equals(uuid)) {

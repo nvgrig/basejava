@@ -24,7 +24,4 @@ public interface Storage {
 
     //получение количества resume в storage
     int size();
-
-    //поиск позиции resume в storage
-    int findResume(String uuid);
 }
