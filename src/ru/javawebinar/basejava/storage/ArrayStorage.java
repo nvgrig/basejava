@@ -19,7 +19,6 @@ public class ArrayStorage extends AbstractArrayStorage{
         } else {
             System.out.println("ERROR: невозможно сохранить \"" + resume.getUuid() + "\", база резюме заполнена полностью");
         }
-
     }
 
     //удаление resume из storage
@@ -32,7 +31,6 @@ public class ArrayStorage extends AbstractArrayStorage{
         } else {
             System.out.println("ERROR: невозможно удалить \"" + uuid + "\", такого резюме нет в базе");
         }
-
     }
 
     //поиск позиции resume в storage
