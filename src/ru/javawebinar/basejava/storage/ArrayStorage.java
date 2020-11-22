@@ -2,45 +2,15 @@ package ru.javawebinar.basejava.storage;
 
 import ru.javawebinar.basejava.model.Resume;
 
-import java.util.Arrays;
-
 /**
  * Array based storage for Resumes
  */
 public class ArrayStorage extends AbstractArrayStorage{
-    private Resume[] storage = new Resume[10_000];
-    private int size = 0;
-
-    //обновление resume, которое имеется в storage
-    public void update(Resume resume) {
-        int index = getIndex(resume.getUuid());
-        if (index >= 0) {
-            storage[index] = resume;
-        } else {
-            System.out.println("ERROR: невозможно обновить \"" + resume.getUuid() + "\", такого резюме нет в базе");
-        }
-    }
-
-    //полная очистка storage
-    public void clear() {
-        Arrays.fill(storage, 0, size, null);
-        size = 0;
-    }
-
-    //обновление resume, которое имеется в storage
-    public void update(Resume resume) {
-        int index = findResume(resume.getUuid());
-        if (index >= 0) {
-            storage[index] = resume;
-        } else {
-            System.out.println("ERROR: невозможно обновить \"" + resume.getUuid() + "\", такого резюме нет в базе");
-        }
-    }
 
     //сохранение нового resume в storage
     public void save(Resume resume) {
         if (size != storage.length) {
-            if (findResume(resume.getUuid()) == -1) {
+            if (getIndex(resume.getUuid()) == -1) {
                 storage[size] = resume;
                 size++;
             } else {
@@ -52,44 +22,9 @@ public class ArrayStorage extends AbstractArrayStorage{
 
     }
 
-    /**
-     * @return array, contains only Resumes in storage (without null)
-     */
-    //получение всех resume из storage
-    public Resume[] getAll() {
-        Resume[] resumes = new Resume[size];
-        if (size > 0) System.arraycopy(storage, 0, resumes, 0, size);
-        return resumes;
-    }
-
-    //получение количества resume в storage
-    public int size() {
-        return size;
-    }
-
-    //получение resume из storage
-    public Resume get(String uuid) {
-        int index = getIndex(uuid);
-        if (index >= 0) {
-            return storage[index];
-        }
-        System.out.println("ERROR: невозможно получить \"" + uuid + "\", такого резюме нет в базе");
-        return null;
-    }
-
-    //получение resume из storage
-    public Resume get(String uuid) {
-        int index = findResume(uuid);
-        if (index >= 0) {
-            return storage[index];
-        }
-        System.out.println("ERROR: невозможно получить \"" + uuid + "\", такого резюме нет в базе");
-        return null;
-    }
-
     //удаление resume из storage
     public void delete(String uuid) {
-        int index = findResume(uuid);
+        int index = getIndex(uuid);
         if (index >= 0) {
             storage[index] = storage[size - 1];
             storage[size - 1] = null;
@@ -101,7 +36,7 @@ public class ArrayStorage extends AbstractArrayStorage{
     }
 
     //поиск позиции resume в storage
-    protected int findResume(String uuid) {
+    protected int getIndex(String uuid) {
         int index = -1;
         for (int i = 0; i < size; i++) {
             if (storage[i].getUuid().equals(uuid)) {
