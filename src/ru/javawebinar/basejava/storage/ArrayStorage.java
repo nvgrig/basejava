@@ -49,6 +49,32 @@ public class ArrayStorage extends AbstractArrayStorage{
         } else {
             System.out.println("ERROR: невозможно сохранить \"" + resume.getUuid() + "\", база резюме заполнена полностью");
         }
+
+    }
+
+    /**
+     * @return array, contains only Resumes in storage (without null)
+     */
+    //получение всех resume из storage
+    public Resume[] getAll() {
+        Resume[] resumes = new Resume[size];
+        if (size > 0) System.arraycopy(storage, 0, resumes, 0, size);
+        return resumes;
+    }
+
+    //получение количества resume в storage
+    public int size() {
+        return size;
+    }
+
+    //получение resume из storage
+    public Resume get(String uuid) {
+        int index = getIndex(uuid);
+        if (index >= 0) {
+            return storage[index];
+        }
+        System.out.println("ERROR: невозможно получить \"" + uuid + "\", такого резюме нет в базе");
+        return null;
     }
 
     //получение resume из storage
