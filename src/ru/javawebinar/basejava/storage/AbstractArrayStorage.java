@@ -13,13 +13,11 @@ public abstract class AbstractArrayStorage implements Storage {
     protected Resume[] storage = new Resume[STORAGE_LIMIT];
     protected int size = 0;
 
-    //полная очистка storage
     public void clear() {
         Arrays.fill(storage, 0, size, null);
         size = 0;
     }
 
-    //обновление resume, которое имеется в storage
     public void update(Resume resume) {
         int index = getIndex(resume.getUuid());
         if (index >= 0) {
@@ -29,7 +27,20 @@ public abstract class AbstractArrayStorage implements Storage {
         }
     }
 
-    //получение resume из storage
+    public void save(Resume resume) {
+        if (size == storage.length) {
+            System.out.println("ERROR: невозможно сохранить \"" + resume.getUuid() + "\", база резюме заполнена полностью");
+            return;
+        }
+        int index = getIndex(resume.getUuid());
+        if (index >= 0) {
+            System.out.println("ERROR: невозможно сохранить \"" + resume.getUuid() + "\", такое резюме есть в базе");
+        } else {
+            saveInArray(index, resume);
+            size++;
+        }
+    }
+
     public Resume get(String uuid) {
         int index = getIndex(uuid);
         if (index >= 0) {
@@ -39,21 +50,33 @@ public abstract class AbstractArrayStorage implements Storage {
         return null;
     }
 
-    /**
-     * @return array, contains only Resumes in storage (without null)
-     */
-    //получение всех resume из storage
+    public void delete(String uuid) {
+        int index = getIndex(uuid);
+        if (index < 0) {
+            System.out.println("ERROR: невозможно удалить \"" + uuid + "\", такого резюме нет в базе");
+        } else {
+            deleteInArray(index);
+            storage[size - 1] = null;
+            size--;
+        }
+    }
+
     public Resume[] getAll() {
         Resume[] resumes = new Resume[size];
         if (size > 0) System.arraycopy(storage, 0, resumes, 0, size);
         return resumes;
     }
 
-    //получение количества resume в storage
     public int size() {
         return size;
     }
 
-    //поиск позиции resume в storage
+    // поиск позиции resume в storage
     protected abstract int getIndex(String uuid);
+
+    // непосредственная операция сохранения в массив
+    protected abstract void saveInArray(int index, Resume resume);
+
+    // непосредственная операция удаления из массива
+    protected abstract void deleteInArray(int index);
 }
