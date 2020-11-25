@@ -13,12 +13,15 @@ public class SortedArrayStorage extends AbstractArrayStorage {
     }
 
     protected void saveInArray(int index, Resume resume) {
-        if (-index - 1 == size) {
-            storage[-index - 1] = resume;
+        // приводим результат поиска индекса из binary search в позицию для сохранения
+        int savePosition = -index - 1;
+
+        if (savePosition == size) {
+            storage[savePosition] = resume;
         } else {
             // сдвигаем массив вправо
-            System.arraycopy(storage, -index - 1, storage, -index, size + index + 1);
-            storage[-index - 1] = resume;
+            System.arraycopy(storage, savePosition, storage, -index, size + index + 1);
+            storage[savePosition] = resume;
         }
     }
 
