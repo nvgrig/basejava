@@ -16,13 +16,11 @@ public class SortedArrayStorage extends AbstractArrayStorage {
         // приводим результат поиска индекса из binary search в позицию для сохранения
         int savePosition = -index - 1;
 
-        if (savePosition == size) {
-            storage[savePosition] = resume;
-        } else {
+        if (savePosition != size) {
             // сдвигаем массив вправо
             System.arraycopy(storage, savePosition, storage, -index, size + index + 1);
-            storage[savePosition] = resume;
         }
+        storage[savePosition] = resume;
     }
 
     protected void deleteInArray(int index) {
