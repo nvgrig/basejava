@@ -29,7 +29,6 @@ public abstract class AbstractArrayStorage implements Storage {
             storage[index] = resume;
         } else {
             throw new NotExistStorageException(resume.getUuid());
-            //System.out.println("ERROR: невозможно обновить \"" + resume.getUuid() + "\", такого резюме нет в базе");
         }
     }
 
@@ -37,12 +36,10 @@ public abstract class AbstractArrayStorage implements Storage {
     public void save(Resume resume) {
         if (size == storage.length) {
             throw new StorageException("База резюме заполнена полностью", resume.getUuid());
-            //System.out.println("ERROR: невозможно сохранить \"" + resume.getUuid() + "\", база резюме заполнена полностью");
         }
         int index = getIndex(resume.getUuid());
         if (index >= 0) {
             throw new ExistStorageException(resume.getUuid());
-            //System.out.println("ERROR: невозможно сохранить \"" + resume.getUuid() + "\", такое резюме есть в базе");
         } else {
             saveInArray(index, resume);
             size++;
@@ -56,14 +53,13 @@ public abstract class AbstractArrayStorage implements Storage {
             return storage[index];
         }
         throw new NotExistStorageException(uuid);
-        //System.out.println("ERROR: невозможно получить \"" + uuid + "\", такого резюме нет в базе");
     }
 
     @Override
     public void delete(String uuid) {
         int index = getIndex(uuid);
         if (index < 0) {
-            System.out.println("ERROR: невозможно удалить \"" + uuid + "\", такого резюме нет в базе");
+            throw new NotExistStorageException(uuid);
         } else {
             deleteInArray(index);
             storage[size - 1] = null;
