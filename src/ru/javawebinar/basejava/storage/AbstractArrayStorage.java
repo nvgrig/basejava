@@ -1,5 +1,8 @@
 package ru.javawebinar.basejava.storage;
 
+import ru.javawebinar.basejava.exception.ExistStorageException;
+import ru.javawebinar.basejava.exception.NotExistStorageException;
+import ru.javawebinar.basejava.exception.StorageException;
 import ru.javawebinar.basejava.model.Resume;
 
 import java.util.Arrays;
@@ -23,18 +26,20 @@ public abstract class AbstractArrayStorage implements Storage {
         if (index >= 0) {
             storage[index] = resume;
         } else {
-            System.out.println("ERROR: невозможно обновить \"" + resume.getUuid() + "\", такого резюме нет в базе");
+            throw new NotExistStorageException(resume.getUuid());
+            //System.out.println("ERROR: невозможно обновить \"" + resume.getUuid() + "\", такого резюме нет в базе");
         }
     }
 
     public void save(Resume resume) {
         if (size == storage.length) {
-            System.out.println("ERROR: невозможно сохранить \"" + resume.getUuid() + "\", база резюме заполнена полностью");
-            return;
+            throw new StorageException("База резюме заполнена полностью", resume.getUuid());
+            //System.out.println("ERROR: невозможно сохранить \"" + resume.getUuid() + "\", база резюме заполнена полностью");
         }
         int index = getIndex(resume.getUuid());
         if (index >= 0) {
-            System.out.println("ERROR: невозможно сохранить \"" + resume.getUuid() + "\", такое резюме есть в базе");
+            throw new ExistStorageException(resume.getUuid());
+            //System.out.println("ERROR: невозможно сохранить \"" + resume.getUuid() + "\", такое резюме есть в базе");
         } else {
             saveInArray(index, resume);
             size++;
@@ -46,8 +51,8 @@ public abstract class AbstractArrayStorage implements Storage {
         if (index >= 0) {
             return storage[index];
         }
-        System.out.println("ERROR: невозможно получить \"" + uuid + "\", такого резюме нет в базе");
-        return null;
+        throw new NotExistStorageException(uuid);
+        //System.out.println("ERROR: невозможно получить \"" + uuid + "\", такого резюме нет в базе");
     }
 
     public void delete(String uuid) {
