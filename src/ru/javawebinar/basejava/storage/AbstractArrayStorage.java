@@ -16,11 +16,13 @@ public abstract class AbstractArrayStorage implements Storage {
     protected Resume[] storage = new Resume[STORAGE_LIMIT];
     protected int size = 0;
 
+    @Override
     public void clear() {
         Arrays.fill(storage, 0, size, null);
         size = 0;
     }
 
+    @Override
     public void update(Resume resume) {
         int index = getIndex(resume.getUuid());
         if (index >= 0) {
@@ -31,6 +33,7 @@ public abstract class AbstractArrayStorage implements Storage {
         }
     }
 
+    @Override
     public void save(Resume resume) {
         if (size == storage.length) {
             throw new StorageException("База резюме заполнена полностью", resume.getUuid());
@@ -46,6 +49,7 @@ public abstract class AbstractArrayStorage implements Storage {
         }
     }
 
+    @Override
     public Resume get(String uuid) {
         int index = getIndex(uuid);
         if (index >= 0) {
@@ -55,6 +59,7 @@ public abstract class AbstractArrayStorage implements Storage {
         //System.out.println("ERROR: невозможно получить \"" + uuid + "\", такого резюме нет в базе");
     }
 
+    @Override
     public void delete(String uuid) {
         int index = getIndex(uuid);
         if (index < 0) {
@@ -66,12 +71,14 @@ public abstract class AbstractArrayStorage implements Storage {
         }
     }
 
+    @Override
     public Resume[] getAll() {
         Resume[] resumes = new Resume[size];
         if (size > 0) System.arraycopy(storage, 0, resumes, 0, size);
         return resumes;
     }
 
+    @Override
     public int size() {
         return size;
     }
