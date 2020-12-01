@@ -12,40 +12,40 @@ public class ListStorage extends AbstractStorage {
     protected ArrayList<Resume> storage = new ArrayList<>();
 
     @Override
-    public void doClear() {
+    protected void doClear() {
         storage.clear();
     }
 
     @Override
-    public void doUpdate(Resume resume, int index) {
+    protected void doUpdate(Resume resume, int index) {
         storage.set(index, resume);
     }
 
     @Override
-    public void doSave(Resume resume, int index) {
+    protected void doSave(Resume resume, int index) {
         storage.add(resume);
     }
 
     @Override
-    public Resume doGet(int index) {
+    protected Resume doGet(int index) {
         return storage.get(index);
     }
 
     @Override
-    public void doDelete(int index) {
+    protected void doDelete(int index) {
         storage.remove(storage.get(index));
         storage.trimToSize();
     }
 
     @Override
-    public Resume[] doGetAll() {
-        return (Resume[]) storage.toArray();
+    protected Resume[] doGetAll() {
+        return storage.toArray(new Resume[0]);
     }
 
     @Override
-    public int doGetSize() {
+    protected int doGetSize() {
         return storage.size();
     }
 
-    protected int getIndex(String uuid) {return 0;};
+    protected int getIndex(String uuid) {return storage.indexOf(new Resume(uuid));}
 }
