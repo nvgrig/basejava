@@ -3,6 +3,7 @@ package ru.javawebinar.basejava.storage;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.condition.DisabledIf;
 import ru.javawebinar.basejava.exception.ExistStorageException;
 import ru.javawebinar.basejava.exception.NotExistStorageException;
 import ru.javawebinar.basejava.exception.StorageException;
@@ -68,6 +69,7 @@ public abstract class AbstractStorageTest {
         storage.save(new Resume(UUID_1));
     }
 
+    @DisabledIf("disableIfCollection")
     @Test(expected = StorageException.class)
     public void saveOverflow() {
         try {
@@ -100,4 +102,9 @@ public abstract class AbstractStorageTest {
     public void getNotExist() {
         storage.get("dummy");
     }
+
+    boolean disableIfCollection() {
+        return (storage instanceof ListStorage);
+    }
+
 }
