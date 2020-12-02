@@ -15,9 +15,21 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
     protected int size = 0;
 
     @Override
-    protected void doClear() {
+    public void clear() {
         Arrays.fill(storage, 0, size, null);
         size = 0;
+    }
+
+    @Override
+    public Resume[] getAll() {
+        Resume[] resumes = new Resume[size];
+        if (size > 0) System.arraycopy(storage, 0, resumes, 0, size);
+        return resumes;
+    }
+
+    @Override
+    public int size() {
+        return size;
     }
 
     @Override
@@ -44,18 +56,6 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
         deleteInArray(index);
         storage[size - 1] = null;
         size--;
-    }
-
-    @Override
-    protected Resume[] doGetAll() {
-        Resume[] resumes = new Resume[size];
-        if (size > 0) System.arraycopy(storage, 0, resumes, 0, size);
-        return resumes;
-    }
-
-    @Override
-    protected int doGetSize() {
-        return size;
     }
 
     // поиск позиции resume в storage

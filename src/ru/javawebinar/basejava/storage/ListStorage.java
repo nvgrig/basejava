@@ -12,8 +12,18 @@ public class ListStorage extends AbstractStorage {
     protected ArrayList<Resume> storage = new ArrayList<>();
 
     @Override
-    protected void doClear() {
+    public void clear() {
         storage.clear();
+    }
+
+    @Override
+    public Resume[] getAll() {
+        return storage.toArray(new Resume[0]);
+    }
+
+    @Override
+    public int size() {
+        return storage.size();
     }
 
     @Override
@@ -37,15 +47,7 @@ public class ListStorage extends AbstractStorage {
         storage.trimToSize();
     }
 
-    @Override
-    protected Resume[] doGetAll() {
-        return storage.toArray(new Resume[0]);
+    protected int getIndex(String uuid) {
+        return storage.indexOf(new Resume(uuid));
     }
-
-    @Override
-    protected int doGetSize() {
-        return storage.size();
-    }
-
-    protected int getIndex(String uuid) {return storage.indexOf(new Resume(uuid));}
 }
