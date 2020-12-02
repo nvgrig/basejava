@@ -3,13 +3,14 @@ package ru.javawebinar.basejava.storage;
 import ru.javawebinar.basejava.model.Resume;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * List based storage for Resumes
  */
 public class ListStorage extends AbstractStorage {
 
-    protected ArrayList<Resume> storage = new ArrayList<>();
+    private final List<Resume> storage = new ArrayList<>();
 
     @Override
     public void clear() {
@@ -44,7 +45,6 @@ public class ListStorage extends AbstractStorage {
     @Override
     protected void doDelete(int index) {
         storage.remove(storage.get(index));
-        storage.trimToSize();
     }
 
     protected int getIndex(String uuid) {
