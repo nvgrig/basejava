@@ -3,14 +3,12 @@ package ru.javawebinar.basejava.storage;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.jupiter.api.condition.DisabledIf;
 import ru.javawebinar.basejava.exception.ExistStorageException;
 import ru.javawebinar.basejava.exception.NotExistStorageException;
-import ru.javawebinar.basejava.exception.StorageException;
 import ru.javawebinar.basejava.model.Resume;
 
 public abstract class AbstractStorageTest {
-    private final Storage storage;
+    protected final Storage storage;
 
     private static final String UUID_1 = "uuid1";
     private static final String UUID_2 = "uuid2";
@@ -69,19 +67,6 @@ public abstract class AbstractStorageTest {
         storage.save(new Resume(UUID_1));
     }
 
-    @DisabledIf("disableIfCollection")
-    @Test(expected = StorageException.class)
-    public void saveOverflow() {
-        try {
-            for (int i = 3; i < AbstractArrayStorage.STORAGE_LIMIT; i++) {
-                storage.save(new Resume());
-            }
-        } catch (Exception e) {
-            Assert.fail("Переполнение произошло раньше времени");
-        }
-        storage.save(new Resume());
-    }
-
     @Test(expected = NotExistStorageException.class)
     public void delete() {
         storage.delete(UUID_1);
@@ -102,9 +87,4 @@ public abstract class AbstractStorageTest {
     public void getNotExist() {
         storage.get("dummy");
     }
-
-    boolean disableIfCollection() {
-        return (storage instanceof ListStorage);
-    }
-
 }

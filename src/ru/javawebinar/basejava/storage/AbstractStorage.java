@@ -45,9 +45,6 @@ public abstract class AbstractStorage implements Storage {
         }
     }
 
-    // операция по очистке
-    //protected abstract void doClear();
-
     // операция по обновлению
     protected abstract void doUpdate(Resume resume, int index);
 
@@ -59,12 +56,6 @@ public abstract class AbstractStorage implements Storage {
 
     // операция по удалению
     protected abstract void doDelete(int uuid);
-
-    // операция по получению всех элементов
-    //protected abstract Resume[] doGetAll();
-
-    // операция по получению размера
-    //protected abstract int doGetSize();
 
     // поиск позиции resume в storage
     protected abstract int getIndex(String uuid);
