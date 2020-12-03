@@ -2,15 +2,15 @@ package ru.javawebinar.basejava.storage;
 
 import ru.javawebinar.basejava.model.Resume;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * List based storage for Resumes
  */
-public class ListStorage extends AbstractStorage {
+public class MapStorage extends AbstractStorage {
 
-    private final List<Resume> storage = new ArrayList<>();
+    private final Map<String, Resume> storage = new HashMap<>();
 
     @Override
     public void clear() {
@@ -19,7 +19,7 @@ public class ListStorage extends AbstractStorage {
 
     @Override
     public Resume[] getAll() {
-        return storage.toArray(new Resume[0]);
+        return storage.values().toArray(new Resume[0]);
     }
 
     @Override
@@ -29,25 +29,25 @@ public class ListStorage extends AbstractStorage {
 
     @Override
     protected void doUpdate(Resume resume, int index) {
-        storage.set(index, resume);
+        storage.replace(resume.getUuid(), resume);
     }
 
     @Override
     protected void doSave(Resume resume, int index) {
-        storage.add(resume);
+        storage.put(resume.getUuid(), resume);
     }
 
     @Override
     protected Resume doGet(int index, String uuid) {
-        return storage.get(index);
+        return storage.get(uuid);
     }
 
     @Override
     protected void doDelete(int index, String uuid) {
-        storage.remove(storage.get(index));
+        storage.remove(uuid);
     }
 
     protected int getIndex(String uuid) {
-        return storage.indexOf(new Resume(uuid));
+        return (storage.containsKey(uuid) ? 1 : -1);
     }
 }
