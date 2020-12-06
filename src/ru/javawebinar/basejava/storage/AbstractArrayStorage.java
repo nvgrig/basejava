@@ -5,9 +5,6 @@ import ru.javawebinar.basejava.model.Resume;
 
 import java.util.Arrays;
 
-/**
- * Array based storage for Resumes
- */
 public abstract class AbstractArrayStorage extends AbstractStorage {
     protected static final int STORAGE_LIMIT = 10_000;
 
@@ -33,33 +30,33 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
     }
 
     @Override
-    protected void doUpdate(Resume resume, int index) {
-        storage[index] = resume;
+    protected void doUpdate(Resume resume, Object searchKey) {
+        storage[(int) searchKey] = resume;
     }
 
     @Override
-    protected void doSave(Resume resume, int index) {
+    protected void doSave(Resume resume, Object searchKey) {
         if (size == storage.length) {
             throw new StorageException("База резюме заполнена полностью", resume.getUuid());
         }
-        saveInArray(index, resume);
+        saveInArray((int) searchKey, resume);
         size++;
     }
 
     @Override
-    protected Resume doGet(int index, String uuid) {
-        return storage[index];
+    protected Resume doGet(Object searchKey) {
+        return storage[(int) searchKey];
     }
 
     @Override
-    protected void doDelete(int index, String uuid) {
-        deleteInArray(index);
+    protected void doDelete(Object searchKey) {
+        deleteInArray((int) searchKey);
         storage[size - 1] = null;
         size--;
     }
 
     // поиск позиции resume в storage
-    protected abstract int getIndex(String uuid);
+    protected abstract Object getSearchKey(String uuid);
 
     // непосредственная операция сохранения в массив
     protected abstract void saveInArray(int index, Resume resume);

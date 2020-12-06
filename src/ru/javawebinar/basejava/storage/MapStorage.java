@@ -5,9 +5,6 @@ import ru.javawebinar.basejava.model.Resume;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * List based storage for Resumes
- */
 public class MapStorage extends AbstractStorage {
 
     private final Map<String, Resume> storage = new HashMap<>();
@@ -28,26 +25,26 @@ public class MapStorage extends AbstractStorage {
     }
 
     @Override
-    protected void doUpdate(Resume resume, int index) {
+    protected void doUpdate(Resume resume, Object searchKey) {
         storage.replace(resume.getUuid(), resume);
     }
 
     @Override
-    protected void doSave(Resume resume, int index) {
+    protected void doSave(Resume resume, Object searchKey) {
         storage.put(resume.getUuid(), resume);
     }
 
     @Override
-    protected Resume doGet(int index, String uuid) {
-        return storage.get(uuid);
+    protected Resume doGet(Object searchKey) {
+        return storage.get(searchKey);
     }
 
     @Override
-    protected void doDelete(int index, String uuid) {
-        storage.remove(uuid);
+    protected void doDelete(Object searchKey) {
+        storage.remove(searchKey);
     }
 
-    protected int getIndex(String uuid) {
-        return (storage.containsKey(uuid) ? 1 : -1);
+    protected Object getSearchKey(String uuid) {
+        return (storage.containsKey(uuid) ? uuid : -1);
     }
 }

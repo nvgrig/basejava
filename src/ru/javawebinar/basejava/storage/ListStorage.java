@@ -5,9 +5,6 @@ import ru.javawebinar.basejava.model.Resume;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * List based storage for Resumes
- */
 public class ListStorage extends AbstractStorage {
 
     private final List<Resume> storage = new ArrayList<>();
@@ -28,26 +25,26 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
-    protected void doUpdate(Resume resume, int index) {
-        storage.set(index, resume);
+    protected void doUpdate(Resume resume, Object searchKey) {
+        storage.set((int) searchKey, resume);
     }
 
     @Override
-    protected void doSave(Resume resume, int index) {
+    protected void doSave(Resume resume, Object searchKey) {
         storage.add(resume);
     }
 
     @Override
-    protected Resume doGet(int index, String uuid) {
-        return storage.get(index);
+    protected Resume doGet(Object searchKey) {
+        return storage.get((int) searchKey);
     }
 
     @Override
-    protected void doDelete(int index, String uuid) {
-        storage.remove(storage.get(index));
+    protected void doDelete(Object searchKey) {
+        storage.remove(storage.get((int) searchKey));
     }
 
-    protected int getIndex(String uuid) {
+    protected Object getSearchKey(String uuid) {
         return storage.indexOf(new Resume(uuid));
     }
 }
