@@ -8,55 +8,47 @@ public abstract class AbstractStorage implements Storage {
 
     @Override
     public void update(Resume resume) {
-        Object searchKey = getSearchKey(resume.getUuid());
-        if (isResumeExist(resume, searchKey)) {
-            doUpdate(resume, searchKey);
-        }
+        Object searchKey = isResumeExist(resume);
+        doUpdate(resume, searchKey);
     }
 
     @Override
     public void save(Resume resume) {
-        Object searchKey = getSearchKey(resume.getUuid());
-        if (isResumeNotExist(resume, searchKey)) {
-            doSave(resume, searchKey);
-        }
+        Object searchKey = isResumeNotExist(resume);
+        doSave(resume, searchKey);
     }
 
     @Override
     public Resume get(String uuid) {
-        Resume result = null;
-        Object searchKey = getSearchKey(uuid);
-        if (isResumeExist(new Resume(uuid), searchKey)) {
-            result = doGet(searchKey);
-        }
-        return result;
+        Object searchKey = isResumeExist(new Resume(uuid));
+        return doGet(searchKey);
     }
 
 
     @Override
     public void delete(String uuid) {
-        Object searchKey = getSearchKey(uuid);
-        if (isResumeExist(new Resume(uuid), searchKey)) {
-            doDelete(searchKey);
-        }
+        Object searchKey = isResumeExist(new Resume(uuid));
+        doDelete(searchKey);
     }
 
     // проверка на наличие резюме
-    protected boolean isResumeExist(Resume resume, Object searchKey) {
+    protected Object isResumeExist(Resume resume) {
+        Object searchKey = getSearchKey(resume.getUuid());
         if (!(searchKey instanceof String)) {
             if ((int) searchKey < 0) {
                 throw new NotExistStorageException(resume.getUuid());
             }
         }
-        return true;
+        return searchKey;
     }
 
     // проверка на отсутствие резюме
-    protected boolean isResumeNotExist(Resume resume, Object searchKey) {
+    protected Object isResumeNotExist(Resume resume) {
+        Object searchKey = getSearchKey(resume.getUuid());
         if ((searchKey instanceof String) || ((int) searchKey >= 0)) {
             throw new ExistStorageException(resume.getUuid());
         }
-        return true;
+        return searchKey;
     }
 
     // операция по обновлению
