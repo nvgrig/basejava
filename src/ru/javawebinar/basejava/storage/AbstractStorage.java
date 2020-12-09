@@ -1,7 +1,5 @@
 package ru.javawebinar.basejava.storage;
 
-import ru.javawebinar.basejava.exception.ExistStorageException;
-import ru.javawebinar.basejava.exception.NotExistStorageException;
 import ru.javawebinar.basejava.model.Resume;
 
 public abstract class AbstractStorage implements Storage {
@@ -34,20 +32,14 @@ public abstract class AbstractStorage implements Storage {
     // проверка на наличие резюме
     protected Object isResumeExist(Resume resume) {
         Object searchKey = getSearchKey(resume.getUuid());
-        if (!(searchKey instanceof String)) {
-            if ((int) searchKey < 0) {
-                throw new NotExistStorageException(resume.getUuid());
-            }
-        }
+        getNotExistStorageException(searchKey, resume);
         return searchKey;
     }
 
     // проверка на отсутствие резюме
     protected Object isResumeNotExist(Resume resume) {
         Object searchKey = getSearchKey(resume.getUuid());
-        if ((searchKey instanceof String) || ((int) searchKey >= 0)) {
-            throw new ExistStorageException(resume.getUuid());
-        }
+        getExistStorageException(searchKey, resume);
         return searchKey;
     }
 
@@ -65,5 +57,11 @@ public abstract class AbstractStorage implements Storage {
 
     // поиск позиции resume в storage
     protected abstract Object getSearchKey(String uuid);
+
+    // проверка исключение notExist
+    protected abstract void getNotExistStorageException(Object searchKey, Resume resume);
+
+    // проверка исключение Exist
+    protected abstract void getExistStorageException(Object searchKey, Resume resume);
 
 }

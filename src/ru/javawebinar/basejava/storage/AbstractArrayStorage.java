@@ -1,5 +1,7 @@
 package ru.javawebinar.basejava.storage;
 
+import ru.javawebinar.basejava.exception.ExistStorageException;
+import ru.javawebinar.basejava.exception.NotExistStorageException;
 import ru.javawebinar.basejava.exception.StorageException;
 import ru.javawebinar.basejava.model.Resume;
 
@@ -63,4 +65,18 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
 
     // непосредственная операция удаления из массива
     protected abstract void deleteInArray(int index);
+
+    @Override
+    protected void getNotExistStorageException(Object searchKey, Resume resume) {
+        if ((int) searchKey < 0) {
+            throw new NotExistStorageException(resume.getUuid());
+        }
+    }
+
+    @Override
+    protected void getExistStorageException(Object searchKey, Resume resume) {
+        if ((int) searchKey >= 0) {
+            throw new ExistStorageException(resume.getUuid());
+        }
+    }
 }

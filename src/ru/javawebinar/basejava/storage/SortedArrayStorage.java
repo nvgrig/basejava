@@ -1,5 +1,7 @@
 package ru.javawebinar.basejava.storage;
 
+import ru.javawebinar.basejava.exception.ExistStorageException;
+import ru.javawebinar.basejava.exception.NotExistStorageException;
 import ru.javawebinar.basejava.model.Resume;
 
 import java.util.Arrays;
@@ -29,5 +31,19 @@ public class SortedArrayStorage extends AbstractArrayStorage {
     protected void deleteInArray(int index) {
         // сдвигаем массив влево
         System.arraycopy(storage, index + 1, storage, index, size - 1 - index);
+    }
+
+    @Override
+    protected void getNotExistStorageException(Object searchKey, Resume resume) {
+        if ((int) searchKey < 0) {
+            throw new NotExistStorageException(resume.getUuid());
+        }
+    }
+
+    @Override
+    protected void getExistStorageException(Object searchKey, Resume resume) {
+        if ((int) searchKey >= 0) {
+            throw new ExistStorageException(resume.getUuid());
+        }
     }
 }
