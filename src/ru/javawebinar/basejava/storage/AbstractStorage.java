@@ -1,45 +1,50 @@
 package ru.javawebinar.basejava.storage;
 
+import ru.javawebinar.basejava.exception.ExistStorageException;
+import ru.javawebinar.basejava.exception.NotExistStorageException;
 import ru.javawebinar.basejava.model.Resume;
 
 public abstract class AbstractStorage implements Storage {
 
     @Override
     public void update(Resume resume) {
-        Object searchKey = isResumeExist(resume);
+        Object searchKey = getExistStorageException(resume);
         doUpdate(resume, searchKey);
     }
 
     @Override
     public void save(Resume resume) {
-        Object searchKey = isResumeNotExist(resume);
+        Object searchKey = getNotExistStorageException(resume);
         doSave(resume, searchKey);
     }
 
     @Override
     public Resume get(String uuid) {
-        Object searchKey = isResumeExist(new Resume(uuid));
+        Object searchKey = getExistStorageException(new Resume(uuid));
         return doGet(searchKey);
     }
 
-
     @Override
     public void delete(String uuid) {
-        Object searchKey = isResumeExist(new Resume(uuid));
+        Object searchKey = getExistStorageException(new Resume(uuid));
         doDelete(searchKey);
     }
 
-    // проверка на наличие резюме
-    protected Object isResumeExist(Resume resume) {
+    // получаем существующий ключ
+    protected Object getExistStorageException(Resume resume) {
         Object searchKey = getSearchKey(resume.getUuid());
-        getNotExistStorageException(searchKey, resume);
+        if (!isResumeExist(searchKey)) {
+            throw new NotExistStorageException(resume.getUuid());
+        }
         return searchKey;
     }
 
-    // проверка на отсутствие резюме
-    protected Object isResumeNotExist(Resume resume) {
+    // получаем несуществующий ключ
+    protected Object getNotExistStorageException(Resume resume) {
         Object searchKey = getSearchKey(resume.getUuid());
-        getExistStorageException(searchKey, resume);
+        if (isResumeExist(searchKey)) {
+            throw new ExistStorageException(resume.getUuid());
+        }
         return searchKey;
     }
 
@@ -58,10 +63,6 @@ public abstract class AbstractStorage implements Storage {
     // поиск позиции resume в storage
     protected abstract Object getSearchKey(String uuid);
 
-    // проверка исключение notExist
-    protected abstract void getNotExistStorageException(Object searchKey, Resume resume);
-
-    // проверка исключение Exist
-    protected abstract void getExistStorageException(Object searchKey, Resume resume);
-
+    // проверка наличия резюме
+    protected abstract boolean isResumeExist(Object searchKey);
 }

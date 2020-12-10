@@ -1,7 +1,5 @@
 package ru.javawebinar.basejava.storage;
 
-import ru.javawebinar.basejava.exception.ExistStorageException;
-import ru.javawebinar.basejava.exception.NotExistStorageException;
 import ru.javawebinar.basejava.model.Resume;
 
 import java.util.HashMap;
@@ -52,16 +50,7 @@ public class MapStorage extends AbstractStorage {
     }
 
     @Override
-    protected void getNotExistStorageException(Object searchKey, Resume resume) {
-        if (searchKey.equals("-1") ) {
-            throw new NotExistStorageException(resume.getUuid());
-        }
-    }
-
-    @Override
-    protected void getExistStorageException(Object searchKey, Resume resume) {
-        if (searchKey.equals(resume.getUuid())) {
-            throw new ExistStorageException(resume.getUuid());
-        }
+    protected boolean isResumeExist(Object searchKey) {
+        return !searchKey.equals("-1");
     }
 }
