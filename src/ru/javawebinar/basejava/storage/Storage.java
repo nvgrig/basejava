@@ -2,6 +2,8 @@ package ru.javawebinar.basejava.storage;
 
 import ru.javawebinar.basejava.model.Resume;
 
+import java.util.List;
+
 public interface Storage {
 
     // полная очистка storage
@@ -20,7 +22,7 @@ public interface Storage {
     void delete(String uuid);
 
     // получение всех resume из storage
-    Resume[] getAll();
+    List<Resume> getAllSorted();
 
     // получение количества resume в storage
     int size();

@@ -4,7 +4,7 @@ import ru.javawebinar.basejava.model.Resume;
 
 import java.util.*;
 
-public class MapUuidStorage extends AbstractStorage {
+public class MapResumeStorage extends AbstractStorage {
 
     private final Map<String, Resume> storage = new HashMap<>();
 
@@ -28,31 +28,34 @@ public class MapUuidStorage extends AbstractStorage {
 
     @Override
     protected void doUpdate(Resume resume, Object searchKey) {
-        storage.replace(resume.getUuid(), resume);
+        Resume foundedResume = (Resume) searchKey;
+        storage.replace(foundedResume.getUuid(), resume);
     }
 
     @Override
     protected void doSave(Resume resume, Object searchKey) {
-        storage.put(resume.getUuid(), resume);
+        Resume foundedResume = (Resume) searchKey;
+        storage.put(foundedResume.getUuid(), resume);
     }
 
     @Override
     protected Resume doGet(Object searchKey) {
-        return storage.get(searchKey);
+        return (Resume) searchKey;
     }
 
     @Override
     protected void doDelete(Object searchKey) {
-        storage.remove(searchKey);
+        Resume foundedResume = (Resume) searchKey;
+        storage.remove(foundedResume.getUuid());
     }
 
     @Override
     protected Object getSearchKey(String uuid) {
-        return (storage.containsKey(uuid) ? uuid : "-1");
+        return (storage.getOrDefault(uuid, null));
     }
 
     @Override
     protected boolean isResumeExist(Object searchKey) {
-        return !searchKey.equals("-1");
+        return (searchKey!=null);
     }
 }

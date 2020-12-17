@@ -8,6 +8,7 @@ import ru.javawebinar.basejava.exception.NotExistStorageException;
 import ru.javawebinar.basejava.model.Resume;
 
 import java.util.Arrays;
+import java.util.Comparator;
 
 public abstract class AbstractStorageTest {
     protected final Storage storage;
@@ -23,9 +24,15 @@ public abstract class AbstractStorageTest {
     @Before
     public void setUp() {
         storage.clear();
-        storage.save(new Resume(UUID_1));
-        storage.save(new Resume(UUID_2));
-        storage.save(new Resume(UUID_3));
+        Resume resume1 = new Resume(UUID_1);
+        resume1.setFullName("Ricky Bobby");
+        Resume resume2 = new Resume(UUID_2);
+        resume2.setFullName("Sam Smith");
+        Resume resume3 = new Resume(UUID_3);
+        resume3.setFullName("Lance Dance");
+        storage.save(resume1);
+        storage.save(resume2);
+        storage.save(resume3);
     }
 
     @Test
@@ -52,12 +59,20 @@ public abstract class AbstractStorageTest {
     }
 
     @Test
-    public void getAll() {
-        Resume[] expectedResult = new Resume[]{new Resume(UUID_1), new Resume(UUID_2), new Resume(UUID_3)};
-        Resume[] result = storage.getAll();
-        Arrays.sort(expectedResult);
-        Arrays.sort(result);
-        Assert.assertArrayEquals(expectedResult, result);
+    public void getAllSorted() {
+        Comparator<Resume> comparator = Comparator.comparing(Resume::getFullName);
+        Resume resume1 = new Resume(UUID_1);
+        resume1.setFullName("Ricky Bobby");
+        Resume resume2 = new Resume(UUID_2);
+        resume2.setFullName("Sam Smith");
+        Resume resume3 = new Resume(UUID_3);
+        resume3.setFullName("Lance Dance");
+        Resume[] expectedResult = new Resume[]{resume1, resume2, resume3};
+        Arrays.sort(expectedResult, comparator);
+        Resume[] result = storage.getAllSorted().toArray(new Resume[0]);
+        Assert.assertEquals(expectedResult[0], result[0]);
+        Assert.assertEquals(expectedResult[1], result[1]);
+        Assert.assertEquals(expectedResult[2], result[2]);
     }
 
     @Test
