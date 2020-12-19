@@ -58,7 +58,7 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
     }
 
     // поиск позиции resume в storage
-    protected abstract Object getSearchKey(String uuid);
+    protected abstract Object getSearchKey(Resume resume);
 
     // непосредственная операция сохранения в массив
     protected abstract void saveInArray(int index, Resume resume);

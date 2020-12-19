@@ -43,14 +43,14 @@ public abstract class AbstractStorageTest {
 
     @Test
     public void update() {
-        Resume expectedResume = new Resume(UUID_1);
+        Resume expectedResume = new Resume(UUID_1, "Ricky Bobby");
         storage.update(expectedResume);
-        Assert.assertEquals(expectedResume, storage.get(UUID_1));
+        Assert.assertEquals(expectedResume, storage.get(new Resume(UUID_1, "Ricky Bobby")));
     }
 
     @Test(expected = NotExistStorageException.class)
     public void updateNotExist() {
-        storage.update(new Resume());
+        storage.update(new Resume("uuid4", "Micky"));
     }
 
     @Test
@@ -66,34 +66,34 @@ public abstract class AbstractStorageTest {
 
     @Test
     public void save() {
-        Resume testResume = new Resume();
+        Resume testResume = new Resume("uuid4", "Micky");
         storage.save(testResume);
-        Assert.assertEquals(testResume, storage.get(testResume.getUuid()));
+        Assert.assertEquals(testResume, storage.get(testResume));
     }
 
     @Test(expected = ExistStorageException.class)
     public void saveExist() {
-        storage.save(new Resume(UUID_1));
+        storage.save(new Resume(UUID_1, "Ricky Bobby"));
     }
 
     @Test(expected = NotExistStorageException.class)
     public void delete() {
-        storage.delete(UUID_1);
-        storage.get(UUID_1);
+        storage.delete(new Resume(UUID_1, "Ricky Bobby"));
+        storage.get(new Resume(UUID_1, "Ricky Bobby"));
     }
 
     @Test(expected = NotExistStorageException.class)
     public void deleteNotExist() {
-        storage.delete("dummy");
+        storage.delete(new Resume("dummy", "Peter"));
     }
 
     @Test
     public void get() {
-        Assert.assertEquals(new Resume(UUID_1), storage.get(UUID_1));
+        Assert.assertEquals(new Resume(UUID_1, "Ricky Bobby"), storage.get(new Resume(UUID_1, "Ricky Bobby")));
     }
 
     @Test(expected = NotExistStorageException.class)
     public void getNotExist() {
-        storage.get("dummy");
+        storage.get(new Resume("dummy", "Peter"));
     }
 }
