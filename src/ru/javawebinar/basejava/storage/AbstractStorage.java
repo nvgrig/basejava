@@ -4,7 +4,12 @@ import ru.javawebinar.basejava.exception.ExistStorageException;
 import ru.javawebinar.basejava.exception.NotExistStorageException;
 import ru.javawebinar.basejava.model.Resume;
 
+import java.util.Comparator;
+import java.util.List;
+
 public abstract class AbstractStorage implements Storage {
+
+    protected static final Comparator<Resume> RESUME_COMPARATOR = Comparator.comparing(Resume::getFullName);
 
     @Override
     public void update(Resume resume) {
@@ -28,6 +33,13 @@ public abstract class AbstractStorage implements Storage {
     public void delete(String uuid) {
         Object searchKey = getExistStorageException(new Resume(uuid));
         doDelete(searchKey);
+    }
+
+    @Override
+    public List<Resume> getAllSorted() {
+        List<Resume> resumeList = getAll();
+        resumeList.sort(RESUME_COMPARATOR);
+        return resumeList;
     }
 
     // получаем существующий ключ
@@ -59,6 +71,9 @@ public abstract class AbstractStorage implements Storage {
 
     // операция по удалению
     protected abstract void doDelete(Object searchKey);
+
+    // операция по получению элементов
+    protected abstract List<Resume> getAll();
 
     // поиск позиции resume в storage
     protected abstract Object getSearchKey(String uuid);
