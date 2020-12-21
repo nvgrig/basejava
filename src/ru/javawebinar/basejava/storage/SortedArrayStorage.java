@@ -28,7 +28,7 @@ public class SortedArrayStorage extends AbstractArrayStorage {
     }
 
     @Override
-    protected void deleteInArray(int index) {
+    protected void deleteFromArray(int index) {
         // сдвигаем массив влево
         System.arraycopy(storage, index + 1, storage, index, size - 1 - index);
     }

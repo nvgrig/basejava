@@ -55,7 +55,7 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
 
     @Override
     protected void doDelete(Object searchKey) {
-        deleteInArray((int) searchKey);
+        deleteFromArray((int) searchKey);
         storage[size - 1] = null;
         size--;
     }
@@ -67,7 +67,7 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
     protected abstract void saveInArray(int index, Resume resume);
 
     // непосредственная операция удаления из массива
-    protected abstract void deleteInArray(int index);
+    protected abstract void deleteFromArray(int index);
 
     @Override
     protected boolean isResumeExist(Object searchKey) {
