@@ -9,13 +9,14 @@ import ru.javawebinar.basejava.model.Resume;
 
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.List;
 
 public abstract class AbstractStorageTest {
     protected final Storage storage;
 
-    protected static final String UUID_1 = "uuid1";
-    protected static final String UUID_2 = "uuid2";
-    protected static final String UUID_3 = "uuid3";
+    protected static final Resume RESUME_1 = new Resume("uuid1", "Ricky Bobby");
+    protected static final Resume RESUME_2 = new Resume("uuid2", "Sam Smith");
+    protected static final Resume RESUME_3 = new Resume("uuid3", "Lance Dance");
 
     public AbstractStorageTest(Storage storage) {
         this.storage = storage;
@@ -24,15 +25,9 @@ public abstract class AbstractStorageTest {
     @Before
     public void setUp() {
         storage.clear();
-        Resume resume1 = new Resume(UUID_1);
-        resume1.setFullName("Ricky Bobby");
-        Resume resume2 = new Resume(UUID_2);
-        resume2.setFullName("Sam Smith");
-        Resume resume3 = new Resume(UUID_3);
-        resume3.setFullName("Lance Dance");
-        storage.save(resume1);
-        storage.save(resume2);
-        storage.save(resume3);
+        storage.save(RESUME_1);
+        storage.save(RESUME_2);
+        storage.save(RESUME_3);
     }
 
     @Test
@@ -48,63 +43,53 @@ public abstract class AbstractStorageTest {
 
     @Test
     public void update() {
-        Resume expectedResume = new Resume(UUID_1);
-        storage.update(expectedResume);
-        Assert.assertEquals(expectedResume, storage.get(UUID_1));
+        storage.update(RESUME_1);
+        Assert.assertEquals(RESUME_1, storage.get(RESUME_1.getUuid()));
     }
 
     @Test(expected = NotExistStorageException.class)
     public void updateNotExist() {
-        storage.update(new Resume());
+        storage.update(new Resume("Not Exist"));
     }
 
     @Test
     public void getAllSorted() {
+        List<Resume> expectedResult = Arrays.asList(RESUME_1, RESUME_2, RESUME_3);
         Comparator<Resume> comparator = Comparator.comparing(Resume::getFullName);
-        Resume resume1 = new Resume(UUID_1);
-        resume1.setFullName("Ricky Bobby");
-        Resume resume2 = new Resume(UUID_2);
-        resume2.setFullName("Sam Smith");
-        Resume resume3 = new Resume(UUID_3);
-        resume3.setFullName("Lance Dance");
-        Resume[] expectedResult = new Resume[]{resume1, resume2, resume3};
-        Arrays.sort(expectedResult, comparator);
-        Resume[] result = storage.getAllSorted().toArray(new Resume[0]);
-        Assert.assertEquals(expectedResult[0], result[0]);
-        Assert.assertEquals(expectedResult[1], result[1]);
-        Assert.assertEquals(expectedResult[2], result[2]);
+        expectedResult.sort(comparator);
+        Assert.assertEquals(expectedResult, storage.getAllSorted());
     }
 
     @Test
     public void save() {
-        Resume testResume = new Resume();
+        Resume testResume = new Resume("Test Resume");
         storage.save(testResume);
         Assert.assertEquals(testResume, storage.get(testResume.getUuid()));
     }
 
     @Test(expected = ExistStorageException.class)
     public void saveExist() {
-        storage.save(new Resume(UUID_1));
+        storage.save(RESUME_1);
     }
 
     @Test(expected = NotExistStorageException.class)
     public void delete() {
-        storage.delete(UUID_1);
-        storage.get(UUID_1);
+        storage.delete(RESUME_1.getUuid());
+        storage.get(RESUME_1.getUuid());
     }
 
     @Test(expected = NotExistStorageException.class)
     public void deleteNotExist() {
-        storage.delete("dummy");
+        storage.delete("Not Exist");
     }
 
     @Test
     public void get() {
-        Assert.assertEquals(new Resume(UUID_1), storage.get(UUID_1));
+        Assert.assertEquals(RESUME_1, storage.get(RESUME_1.getUuid()));
     }
 
     @Test(expected = NotExistStorageException.class)
     public void getNotExist() {
-        storage.get("dummy");
+        storage.get("Not Exist");
     }
 }
