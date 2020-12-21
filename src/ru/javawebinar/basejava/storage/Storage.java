@@ -16,10 +16,10 @@ public interface Storage {
     void save(Resume resume);
 
     // получение resume из storage
-    Resume get(String uuid);
+    Resume get(Resume Resume);
 
     // удаление resume из storage
-    void delete(String uuid);
+    void delete(Resume resume);
 
     // получение всех resume из storage
     List<Resume> getAllSorted();
