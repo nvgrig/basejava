@@ -48,11 +48,11 @@ public class MapUuidStorage extends AbstractStorage {
 
     @Override
     protected Object getSearchKey(String uuid) {
-        return (storage.containsKey(uuid) ? uuid : "-1");
+        return uuid;
     }
 
     @Override
     protected boolean isResumeExist(Object searchKey) {
-        return !searchKey.equals("-1");
+        return storage.containsKey(searchKey);
     }
 }
