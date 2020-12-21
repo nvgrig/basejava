@@ -7,8 +7,6 @@ import java.util.Arrays;
 
 public class SortedArrayStorage extends AbstractArrayStorage {
 
-    //private static final Comparator<Resume> RESUME_COMPARATOR = Comparator.comparing(Resume::getFullName);
-
     @Override
     protected Object getSearchKey(String uuid) {
         Resume searchKey = new Resume(uuid);
