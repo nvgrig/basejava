@@ -8,7 +8,6 @@ import ru.javawebinar.basejava.exception.NotExistStorageException;
 import ru.javawebinar.basejava.model.Resume;
 
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
 
 public abstract class AbstractStorageTest {
@@ -55,8 +54,8 @@ public abstract class AbstractStorageTest {
     @Test
     public void getAllSorted() {
         List<Resume> expectedResult = Arrays.asList(RESUME_1, RESUME_2, RESUME_3);
-        Comparator<Resume> comparator = Comparator.comparing(Resume::getFullName);
-        expectedResult.sort(comparator);
+//        Comparator<Resume> comparator = Comparator.comparing(Resume::getFullName);
+//        expectedResult.sort(comparator);
         Assert.assertEquals(expectedResult, storage.getAllSorted());
     }
 
