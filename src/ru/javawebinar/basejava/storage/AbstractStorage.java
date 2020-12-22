@@ -31,7 +31,7 @@ public abstract class AbstractStorage implements Storage {
     }
 
     // получаем существующий ключ
-    protected Object getExistSearchKey(Resume resume) {
+    private Object getExistSearchKey(Resume resume) {
         Object searchKey = getSearchKey(resume);
         if (!isResumeExist(searchKey)) {
             throw new NotExistStorageException(resume.getUuid());
@@ -40,7 +40,7 @@ public abstract class AbstractStorage implements Storage {
     }
 
     // получаем несуществующий ключ
-    protected Object getNotExistSearchKey(Resume resume) {
+    private Object getNotExistSearchKey(Resume resume) {
         Object searchKey = getSearchKey(resume);
         if (isResumeExist(searchKey)) {
             throw new ExistStorageException(resume.getUuid());
