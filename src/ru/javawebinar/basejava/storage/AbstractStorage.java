@@ -4,6 +4,8 @@ import ru.javawebinar.basejava.exception.ExistStorageException;
 import ru.javawebinar.basejava.exception.NotExistStorageException;
 import ru.javawebinar.basejava.model.Resume;
 
+import java.util.List;
+
 public abstract class AbstractStorage implements Storage {
 
     @Override
@@ -28,6 +30,11 @@ public abstract class AbstractStorage implements Storage {
     public void delete(Resume resume) {
         Object searchKey = getExistSearchKey(resume);
         doDelete(searchKey);
+    }
+
+    @Override
+    public List<Resume> getAllSorted() {
+        return getAll();
     }
 
     // получаем существующий ключ
@@ -59,6 +66,9 @@ public abstract class AbstractStorage implements Storage {
 
     // операция по удалению
     protected abstract void doDelete(Object searchKey);
+
+    // операция по получению элементов
+    protected abstract List<Resume> getAll();
 
     // поиск позиции resume в storage
     protected abstract Object getSearchKey(Resume resume);
