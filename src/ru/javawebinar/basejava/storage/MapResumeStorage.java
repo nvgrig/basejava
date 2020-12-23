@@ -14,7 +14,7 @@ public class MapResumeStorage extends AbstractStorage {
     }
 
     @Override
-    protected List<Resume> getAll() {
+    public List<Resume> getAll() {
         return new ArrayList<>(storage.values());
     }
 
@@ -47,11 +47,11 @@ public class MapResumeStorage extends AbstractStorage {
 
     @Override
     protected Object getSearchKey(Resume resume) {
-        return storage.get(resume.getUuid());
+        return resume;
     }
 
     @Override
     protected boolean isResumeExist(Object searchKey) {
-        return searchKey!=null;
+        return storage.containsValue(searchKey);
     }
 }

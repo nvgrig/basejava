@@ -16,7 +16,7 @@ public interface Storage {
     void save(Resume resume);
 
     // получение resume из storage
-    Resume get(Resume resume);
+    Resume get(Resume Resume);
 
     // удаление resume из storage
     void delete(Resume resume);

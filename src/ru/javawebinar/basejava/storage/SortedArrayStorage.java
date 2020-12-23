@@ -9,7 +9,7 @@ public class SortedArrayStorage extends AbstractArrayStorage {
 
     @Override
     protected Object getSearchKey(Resume resume) {
-        return Arrays.binarySearch(storage, 0, size, resume, RESUME_COMPARATOR);
+        return Arrays.binarySearch(storage, 0, size, resume);
     }
 
     @Override
@@ -25,7 +25,7 @@ public class SortedArrayStorage extends AbstractArrayStorage {
     }
 
     @Override
-    protected void deleteInArray(int index) {
+    protected void deleteFromArray(int index) {
         // сдвигаем массив влево
         System.arraycopy(storage, index + 1, storage, index, size - 1 - index);
     }

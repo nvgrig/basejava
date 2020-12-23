@@ -7,16 +7,16 @@ import ru.javawebinar.basejava.exception.ExistStorageException;
 import ru.javawebinar.basejava.exception.NotExistStorageException;
 import ru.javawebinar.basejava.model.Resume;
 
-import java.util.ArrayList;
-import java.util.Comparator;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public abstract class AbstractStorageTest {
     protected final Storage storage;
 
-    protected static final String UUID_1 = "uuid1";
-    protected static final String UUID_2 = "uuid2";
-    protected static final String UUID_3 = "uuid3";
+    protected static final Resume RESUME_1 = new Resume("uuid1", "Ricky Bobby");
+    protected static final Resume RESUME_2 = new Resume("uuid2", "Sam Smith");
+    protected static final Resume RESUME_3 = new Resume("uuid3", "Lance Dance");
 
     public AbstractStorageTest(Storage storage) {
         this.storage = storage;
@@ -25,9 +25,9 @@ public abstract class AbstractStorageTest {
     @Before
     public void setUp() {
         storage.clear();
-        storage.save(new Resume(UUID_1, "Ricky Bobby"));
-        storage.save(new Resume(UUID_2, "Sam Smith"));
-        storage.save(new Resume(UUID_3, "Lance Dance"));
+        storage.save(RESUME_1);
+        storage.save(RESUME_2);
+        storage.save(RESUME_3);
     }
 
     @Test
@@ -43,57 +43,52 @@ public abstract class AbstractStorageTest {
 
     @Test
     public void update() {
-        Resume expectedResume = new Resume(UUID_1, "Ricky Bobby");
-        storage.update(expectedResume);
-        Assert.assertEquals(expectedResume, storage.get(new Resume(UUID_1, "Ricky Bobby")));
+        storage.update(RESUME_1);
+        Assert.assertEquals(RESUME_1, storage.get(RESUME_1));
     }
 
     @Test(expected = NotExistStorageException.class)
     public void updateNotExist() {
-        storage.update(new Resume("uuid4", "Micky"));
+        storage.update(new Resume("Not Exist"));
     }
 
     @Test
     public void getAllSorted() {
-        List<Resume> expectedResult = new ArrayList<>();
-        expectedResult.add(new Resume(UUID_1, "Ricky Bobby"));
-        expectedResult.add(new Resume(UUID_2, "Sam Smith"));
-        expectedResult.add(new Resume(UUID_3, "Lance Dance"));
-        Comparator<Resume> comparator = Comparator.comparing(Resume::getFullName);
-        expectedResult.sort(comparator);
+        List<Resume> expectedResult = Arrays.asList(RESUME_1, RESUME_2, RESUME_3);
+        Collections.sort(expectedResult);
         Assert.assertEquals(expectedResult, storage.getAllSorted());
     }
 
     @Test
     public void save() {
-        Resume testResume = new Resume("uuid4", "Micky");
+        Resume testResume = new Resume("Test Resume");
         storage.save(testResume);
         Assert.assertEquals(testResume, storage.get(testResume));
     }
 
     @Test(expected = ExistStorageException.class)
     public void saveExist() {
-        storage.save(new Resume(UUID_1, "Ricky Bobby"));
+        storage.save(RESUME_1);
     }
 
     @Test(expected = NotExistStorageException.class)
     public void delete() {
-        storage.delete(new Resume(UUID_1, "Ricky Bobby"));
-        storage.get(new Resume(UUID_1, "Ricky Bobby"));
+        storage.delete(RESUME_1);
+        storage.get(RESUME_1);
     }
 
     @Test(expected = NotExistStorageException.class)
     public void deleteNotExist() {
-        storage.delete(new Resume("dummy", "Peter"));
+        storage.delete(new Resume("Not Exist"));
     }
 
     @Test
     public void get() {
-        Assert.assertEquals(new Resume(UUID_1, "Ricky Bobby"), storage.get(new Resume(UUID_1, "Ricky Bobby")));
+        Assert.assertEquals(RESUME_1, storage.get(RESUME_1));
     }
 
     @Test(expected = NotExistStorageException.class)
     public void getNotExist() {
-        storage.get(new Resume("dummy", "Peter"));
+        storage.get(new Resume("Not Exist"));
     }
 }
