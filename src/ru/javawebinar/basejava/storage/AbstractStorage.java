@@ -6,35 +6,43 @@ import ru.javawebinar.basejava.model.Resume;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Logger;
 
 public abstract class AbstractStorage<SK> implements Storage {
 
+    private static final Logger LOG = Logger.getLogger(AbstractStorage.class.getName());
+
     @Override
     public void update(Resume resume) {
+        LOG.info("Update " + resume);
         SK searchKey = getExistSearchKey(resume);
         doUpdate(resume, searchKey);
     }
 
     @Override
     public void save(Resume resume) {
+        LOG.info("Save " + resume);
         SK searchKey = getNotExistSearchKey(resume);
         doSave(resume, searchKey);
     }
 
     @Override
-    public Resume get(Resume Resume) {
-        SK searchKey = getExistSearchKey(Resume);
+    public Resume get(Resume resume) {
+        LOG.info("Get " + resume);
+        SK searchKey = getExistSearchKey(resume);
         return doGet(searchKey);
     }
 
     @Override
     public void delete(Resume resume) {
+        LOG.info("Delete " + resume);
         SK searchKey = getExistSearchKey(resume);
         doDelete(searchKey);
     }
 
     @Override
     public List<Resume> getAllSorted() {
+        LOG.info("Get all sorted");
         List<Resume> resumeList = getAll();
         Collections.sort(resumeList);
         return resumeList;
