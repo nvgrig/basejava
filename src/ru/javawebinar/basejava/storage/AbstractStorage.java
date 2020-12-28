@@ -7,29 +7,29 @@ import ru.javawebinar.basejava.model.Resume;
 import java.util.Collections;
 import java.util.List;
 
-public abstract class AbstractStorage implements Storage {
+public abstract class AbstractStorage<SK> implements Storage {
 
     @Override
     public void update(Resume resume) {
-        Object searchKey = getExistSearchKey(resume);
+        SK searchKey = getExistSearchKey(resume);
         doUpdate(resume, searchKey);
     }
 
     @Override
     public void save(Resume resume) {
-        Object searchKey = getNotExistSearchKey(resume);
+        SK searchKey = getNotExistSearchKey(resume);
         doSave(resume, searchKey);
     }
 
     @Override
     public Resume get(Resume Resume) {
-        Object searchKey = getExistSearchKey(Resume);
+        SK searchKey = getExistSearchKey(Resume);
         return doGet(searchKey);
     }
 
     @Override
     public void delete(Resume resume) {
-        Object searchKey = getExistSearchKey(resume);
+        SK searchKey = getExistSearchKey(resume);
         doDelete(searchKey);
     }
 
@@ -41,8 +41,8 @@ public abstract class AbstractStorage implements Storage {
     }
 
     // получаем существующий ключ
-    private Object getExistSearchKey(Resume resume) {
-        Object searchKey = getSearchKey(resume);
+    private SK getExistSearchKey(Resume resume) {
+        SK searchKey = getSearchKey(resume);
         if (!isResumeExist(searchKey)) {
             throw new NotExistStorageException(resume.getUuid());
         }
@@ -50,8 +50,8 @@ public abstract class AbstractStorage implements Storage {
     }
 
     // получаем несуществующий ключ
-    private Object getNotExistSearchKey(Resume resume) {
-        Object searchKey = getSearchKey(resume);
+    private SK getNotExistSearchKey(Resume resume) {
+        SK searchKey = getSearchKey(resume);
         if (isResumeExist(searchKey)) {
             throw new ExistStorageException(resume.getUuid());
         }
@@ -59,23 +59,23 @@ public abstract class AbstractStorage implements Storage {
     }
 
     // операция по обновлению
-    protected abstract void doUpdate(Resume resume, Object searchKey);
+    protected abstract void doUpdate(Resume resume, SK searchKey);
 
     // операция по сохранению
-    protected abstract void doSave(Resume resume, Object searchKey);
+    protected abstract void doSave(Resume resume, SK searchKey);
 
     // операция по получению
-    protected abstract Resume doGet(Object searchKey);
+    protected abstract Resume doGet(SK searchKey);
 
     // операция по удалению
-    protected abstract void doDelete(Object searchKey);
+    protected abstract void doDelete(SK searchKey);
 
     // операция по получению элементов
     protected abstract List<Resume> getAll();
 
     // поиск позиции resume в storage
-    protected abstract Object getSearchKey(Resume resume);
+    protected abstract SK getSearchKey(Resume resume);
 
     // проверка наличия резюме
-    protected abstract boolean isResumeExist(Object searchKey);
+    protected abstract boolean isResumeExist(SK searchKey);
 }

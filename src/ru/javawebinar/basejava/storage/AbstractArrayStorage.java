@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public abstract class AbstractArrayStorage extends AbstractStorage {
+public abstract class AbstractArrayStorage extends AbstractStorage<Integer> {
     protected static final int STORAGE_LIMIT = 10_000;
 
     protected Resume[] storage = new Resume[STORAGE_LIMIT];
@@ -32,33 +32,33 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
     }
 
     @Override
-    protected void doUpdate(Resume resume, Object searchKey) {
-        storage[(int) searchKey] = resume;
+    protected void doUpdate(Resume resume, Integer searchKey) {
+        storage[searchKey] = resume;
     }
 
     @Override
-    protected void doSave(Resume resume, Object searchKey) {
+    protected void doSave(Resume resume, Integer searchKey) {
         if (size == storage.length) {
             throw new StorageException("База резюме заполнена полностью", resume.getUuid());
         }
-        saveInArray((int) searchKey, resume);
+        saveInArray(searchKey, resume);
         size++;
     }
 
     @Override
-    protected Resume doGet(Object searchKey) {
-        return storage[(int) searchKey];
+    protected Resume doGet(Integer searchKey) {
+        return storage[searchKey];
     }
 
     @Override
-    protected void doDelete(Object searchKey) {
-        deleteFromArray((int) searchKey);
+    protected void doDelete(Integer searchKey) {
+        deleteFromArray(searchKey);
         storage[size - 1] = null;
         size--;
     }
 
     // поиск позиции resume в storage
-    protected abstract Object getSearchKey(Resume resume);
+    protected abstract Integer getSearchKey(Resume resume);
 
     // непосредственная операция сохранения в массив
     protected abstract void saveInArray(int index, Resume resume);
@@ -67,7 +67,7 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
     protected abstract void deleteFromArray(int index);
 
     @Override
-    protected boolean isResumeExist(Object searchKey) {
-        return (int) searchKey >= 0;
+    protected boolean isResumeExist(Integer searchKey) {
+        return searchKey >= 0;
     }
 }
