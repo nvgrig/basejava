@@ -57,13 +57,13 @@ public abstract class AbstractArrayStorage extends AbstractStorage<Integer> {
         size--;
     }
 
-    // поиск позиции resume в storage
+    // resume position search in storage
     protected abstract Integer getSearchKey(Resume resume);
 
-    // непосредственная операция сохранения в массив
+    // saving in array
     protected abstract void saveInArray(int index, Resume resume);
 
-    // непосредственная операция удаления из массива
+    // deleting from array
     protected abstract void deleteFromArray(int index);
 
     @Override

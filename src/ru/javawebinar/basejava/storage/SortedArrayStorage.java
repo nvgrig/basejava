@@ -14,11 +14,11 @@ public class SortedArrayStorage extends AbstractArrayStorage {
 
     @Override
     protected void saveInArray(int index, Resume resume) {
-        // приводим результат поиска индекса из binary search в позицию для сохранения
+
         int savePosition = -index - 1;
 
         if (savePosition != size) {
-            // сдвигаем массив вправо
+            // shifting array to the right
             System.arraycopy(storage, savePosition, storage, -index, size + index + 1);
         }
         storage[savePosition] = resume;
@@ -26,7 +26,7 @@ public class SortedArrayStorage extends AbstractArrayStorage {
 
     @Override
     protected void deleteFromArray(int index) {
-        // сдвигаем массив влево
+        // shifting array to the left
         System.arraycopy(storage, index + 1, storage, index, size - 1 - index);
     }
 }

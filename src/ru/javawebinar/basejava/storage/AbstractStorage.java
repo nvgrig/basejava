@@ -48,7 +48,7 @@ public abstract class AbstractStorage<SK> implements Storage {
         return resumeList;
     }
 
-    // получаем существующий ключ
+    // getting exist searchKey
     private SK getExistSearchKey(Resume resume) {
         SK searchKey = getSearchKey(resume);
         if (!isResumeExist(searchKey)) {
@@ -57,7 +57,7 @@ public abstract class AbstractStorage<SK> implements Storage {
         return searchKey;
     }
 
-    // получаем несуществующий ключ
+    // getting not exist searchKey
     private SK getNotExistSearchKey(Resume resume) {
         SK searchKey = getSearchKey(resume);
         if (isResumeExist(searchKey)) {
@@ -66,24 +66,24 @@ public abstract class AbstractStorage<SK> implements Storage {
         return searchKey;
     }
 
-    // операция по обновлению
+    // simple update operation
     protected abstract void doUpdate(Resume resume, SK searchKey);
 
-    // операция по сохранению
+    // simple save operation
     protected abstract void doSave(Resume resume, SK searchKey);
 
-    // операция по получению
+    // simple get operation
     protected abstract Resume doGet(SK searchKey);
 
-    // операция по удалению
+    // simple delete operation
     protected abstract void doDelete(SK searchKey);
 
-    // операция по получению элементов
+    // simple get all resumes operation
     protected abstract List<Resume> getAll();
 
-    // поиск позиции resume в storage
+    // simple get searchKey operation
     protected abstract SK getSearchKey(Resume resume);
 
-    // проверка наличия резюме
+    // resume exist check
     protected abstract boolean isResumeExist(SK searchKey);
 }

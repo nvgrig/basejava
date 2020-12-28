@@ -6,24 +6,24 @@ import java.util.List;
 
 public interface Storage {
 
-    // полная очистка storage
+    // storage clear
     void clear();
 
-    // обновление resume, которое имеется в storage
+    // update resume in storage
     void update(Resume resume);
 
-    // сохранение нового resume в storage
+    // save resume in storage
     void save(Resume resume);
 
-    // получение resume из storage
+    // get resume from storage
     Resume get(Resume Resume);
 
-    // удаление resume из storage
+    // delete resume from storage
     void delete(Resume resume);
 
-    // получение всех resume из storage
+    // get all resume from storage in sorted order
     List<Resume> getAllSorted();
 
-    // получение количества resume в storage
+    // get storage size
     int size();
 }
