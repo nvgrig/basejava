@@ -19,8 +19,6 @@ public class ListSection<T> extends ResumeSection{
 
     @Override
     public String toString() {
-        return "ListSection{" +
-                "value=" + value +
-                '}';
+        return value.toString();
     }
 }
