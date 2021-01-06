@@ -3,22 +3,19 @@ package ru.javawebinar.basejava.model;
 import java.util.List;
 
 public class ListSection<T> extends ResumeSection{
-    private List<T> value;
+    private final List<T> value;
 
     public ListSection(List<T> value) {
         this.value = value;
     }
 
-    public List<T> getValue() {
-        return value;
-    }
-
-    public void setValue(List<T> value) {
-        this.value = value;
-    }
-
     @Override
     public String toString() {
-        return value.toString();
+        StringBuilder result = new StringBuilder();
+        for (T val: value) {
+            result.append(val);
+            result.append("\n");
+        }
+        return result.toString();
     }
 }
