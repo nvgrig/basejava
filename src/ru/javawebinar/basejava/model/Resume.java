@@ -1,5 +1,6 @@
 package ru.javawebinar.basejava.model;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
@@ -27,10 +28,20 @@ public class Resume implements Comparable<Resume> {
         Objects.requireNonNull(fullName, "fullName must not be null");
         this.uuid = uuid;
         this.fullName = fullName;
+        contacts = new HashMap<>();
+        sections = new HashMap<>();
     }
 
     public String getUuid() {
         return uuid;
+    }
+
+    public Map<ContactType, String> getContacts() {
+        return contacts;
+    }
+
+    public Map<SectionType, ResumeSection> getSections() {
+        return sections;
     }
 
     @Override
