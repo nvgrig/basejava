@@ -2,7 +2,7 @@ package ru.javawebinar.basejava.model;
 
 import java.util.List;
 
-public class ListSection<T> extends ResumeSection{
+public class ListSection<T> extends AbstractSection {
     private final List<T> value;
 
     public ListSection(List<T> value) {
