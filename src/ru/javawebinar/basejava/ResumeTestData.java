@@ -12,6 +12,7 @@ public class ResumeTestData {
         resume.getContacts().put(ContactType.PHONE, "+7(921) 855-0482");
         resume.getContacts().put(ContactType.SKYPE, "grigory.kislin");
         resume.getContacts().put(ContactType.MAIL, "gkislin@yandex.ru");
+        resume.getContacts().put(ContactType.WEBPAGE, "http://gkislin.ru/");
         resume.getSections().put(SectionType.OBJECTIVE, new TextSection("Ведущий стажировок и корпоративного обучения по Java Web и Enterprise технологиям"));
         resume.getSections().put(SectionType.PERSONAL, new TextSection("Аналитический склад ума, сильная логика, креативность, инициативность. Пурист кода и архитектуры."));
         List<String> achiveList = new ArrayList<>();

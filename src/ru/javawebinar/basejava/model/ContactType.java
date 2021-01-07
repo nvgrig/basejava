@@ -3,15 +3,16 @@ package ru.javawebinar.basejava.model;
 public enum ContactType {
     PHONE("Тел.:"),
     SKYPE("Skype:"),
-    MAIL("Почта:");
+    MAIL("Почта:"),
+    WEBPAGE("Сайт:");
 
-    private String title;
+    private final String name;
 
-    ContactType(String title) {
-        this.title = title;
+    ContactType(String name) {
+        this.name = name;
     }
 
     public String getTitle() {
-        return title;
+        return name;
     }
 }
