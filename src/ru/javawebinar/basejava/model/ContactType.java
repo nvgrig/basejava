@@ -6,13 +6,13 @@ public enum ContactType {
     MAIL("Почта:"),
     WEBPAGE("Сайт:");
 
-    private final String name;
+    private final String title;
 
-    ContactType(String name) {
-        this.name = name;
+    ContactType(String title) {
+        this.title = title;
     }
 
     public String getTitle() {
-        return name;
+        return title;
     }
 }
