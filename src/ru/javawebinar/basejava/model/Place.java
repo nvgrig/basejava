@@ -3,25 +3,25 @@ package ru.javawebinar.basejava.model;
 import java.time.YearMonth;
 
 public class Place {
-    private YearMonth beginDate;
-    private YearMonth finishDate;
-    private String title;
-    private String comments;
+    private final YearMonth beginDate;
+    private final YearMonth finishDate;
+    private final String name;
+    private final String comments;
 
-    public Place(String title, YearMonth beginDate, YearMonth finishDate, String comments) {
-        this.title = title;
+    public Place(String name, YearMonth beginDate, YearMonth finishDate, String comments) {
+        this.name = name;
         this.beginDate = beginDate;
         this.finishDate = finishDate;
         this.comments = comments;
     }
 
-    public Place(String title, YearMonth beginDate, YearMonth finishDate) {
-        this(title, beginDate, finishDate, "");
+    public Place(String name, YearMonth beginDate, YearMonth finishDate) {
+        this(name, beginDate, finishDate, "");
     }
 
     @Override
     public String toString() {
-        return title + "\n" +
+        return name + "\n" +
                 beginDate + " - " + finishDate + "\n" +
                 comments + "\n";
     }
