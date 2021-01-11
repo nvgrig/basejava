@@ -1,11 +1,13 @@
 package ru.javawebinar.basejava.model;
 
 import java.util.List;
+import java.util.Objects;
 
 public class ListSection<T> extends AbstractSection {
     private final List<T> value;
 
     public ListSection(List<T> value) {
+        Objects.requireNonNull(value, "Place/text must not be null");
         this.value = value;
     }
 

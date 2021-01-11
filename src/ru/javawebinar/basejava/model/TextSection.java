@@ -1,9 +1,12 @@
 package ru.javawebinar.basejava.model;
 
+import java.util.Objects;
+
 public class TextSection extends AbstractSection {
     private final String value;
 
     public TextSection(String value) {
+        Objects.requireNonNull(value, "Text must not be null");
         this.value = value;
     }
 
