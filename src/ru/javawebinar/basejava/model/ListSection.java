@@ -18,4 +18,19 @@ public class ListSection<T> extends AbstractSection {
         }
         return result.toString();
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ListSection<?> that = (ListSection<?>) o;
+
+        return value.equals(that.value);
+    }
+
+    @Override
+    public int hashCode() {
+        return value.hashCode();
+    }
 }
