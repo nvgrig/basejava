@@ -1,36 +1,56 @@
 package ru.javawebinar.basejava.model;
 
 import java.time.YearMonth;
+import java.util.Objects;
 
 public class Place {
+    private final Link homePage;
+
     private final YearMonth beginDate;
     private final YearMonth finishDate;
-    private final String name;
-    private final String comments;
+    private final String title;
+    private final String description;
 
-    public Place(String name, YearMonth beginDate, YearMonth finishDate, String comments) {
-        this.name = name;
+    public Place(String linkName, String linkUrl, YearMonth beginDate, YearMonth finishDate, String title, String description) {
+        Objects.requireNonNull(beginDate, "beginDate must not be null");
+        Objects.requireNonNull(finishDate, "finishDate must not be null");
+        Objects.requireNonNull(title, "title  must not be null");
+        this.homePage = new Link(linkName, linkUrl);
         this.beginDate = beginDate;
         this.finishDate = finishDate;
-        this.comments = comments;
-    }
-
-    public Place(String name, YearMonth beginDate, YearMonth finishDate) {
-        this(name, beginDate, finishDate, "");
+        this.title = title;
+        this.description = description;
     }
 
     @Override
     public String toString() {
-        return name + "\n" +
+        return homePage + "\n" +
                 beginDate + " - " + finishDate + "\n" +
-                comments + "\n";
+                title + "\n" +
+                description + "\n";
     }
 
-    public static void main(String[] args) {
-        Place place1 = new Place("Coursera", YearMonth.of(2013, 3), YearMonth.of(2013, 5), "Functional Programming Principles in Scala by Martin Odersky");
-        System.out.println(place1);
-        Place place2 = new Place("Luxoft (Deutsche Bank)", YearMonth.of(2012, 10), YearMonth.of(2012, 4), "Ведущий программист\n" +
-                "Участие в проекте Deutsche Bank CRM (WebLogic, Hibernate, Spring, Spring MVC, SmartGWT, GWT, Jasper, Oracle). Реализация клиентской и серверной части CRM. Реализация RIA-приложения для администрирования, мониторинга и анализа результатов в области алгоритмического трейдинга. JPA, Spring, Spring-MVC, GWT, ExtGWT (GXT), Highstock, Commet, HTML5.");
-        System.out.println(place2);
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Place place = (Place) o;
+
+        if (!homePage.equals(place.homePage)) return false;
+        if (!beginDate.equals(place.beginDate)) return false;
+        if (!finishDate.equals(place.finishDate)) return false;
+        if (!title.equals(place.title)) return false;
+        return description != null ? description.equals(place.description) : place.description == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = homePage.hashCode();
+        result = 31 * result + beginDate.hashCode();
+        result = 31 * result + finishDate.hashCode();
+        result = 31 * result + title.hashCode();
+        result = 31 * result + (description != null ? description.hashCode() : 0);
+        return result;
     }
 }
