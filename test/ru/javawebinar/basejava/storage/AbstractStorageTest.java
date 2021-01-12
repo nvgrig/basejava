@@ -3,6 +3,7 @@ package ru.javawebinar.basejava.storage;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import ru.javawebinar.basejava.ResumeTestData;
 import ru.javawebinar.basejava.exception.ExistStorageException;
 import ru.javawebinar.basejava.exception.NotExistStorageException;
 import ru.javawebinar.basejava.model.Resume;
@@ -14,9 +15,9 @@ import java.util.List;
 public abstract class AbstractStorageTest {
     protected final Storage storage;
 
-    protected static final Resume RESUME_1 = new Resume("uuid1", "Ricky Bobby");
-    protected static final Resume RESUME_2 = new Resume("uuid2", "Sam Smith");
-    protected static final Resume RESUME_3 = new Resume("uuid3", "Lance Dance");
+    protected static final Resume RESUME_1 = ResumeTestData.getTestResume("uuid1", "Ricky Bobby");
+    protected static final Resume RESUME_2 = ResumeTestData.getTestResume("uuid2", "Sam Smith");
+    protected static final Resume RESUME_3 = ResumeTestData.getTestResume("uuid3", "Lance Dance");
 
     public AbstractStorageTest(Storage storage) {
         this.storage = storage;
