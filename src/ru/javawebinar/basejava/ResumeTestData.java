@@ -7,8 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ResumeTestData {
-    public static void main(String[] args) {
-        Resume resume = new Resume("Григорий Кислин");
+    public static Resume getTestResume(String uuid, String fullName) {
+        Resume resume = new Resume(uuid, fullName);
         resume.getContacts().put(ContactType.PHONE, "+7(921) 855-0482");
         resume.getContacts().put(ContactType.SKYPE, "grigory.kislin");
         resume.getContacts().put(ContactType.MAIL, "gkislin@yandex.ru");
@@ -33,18 +33,6 @@ public class ResumeTestData {
         eduOrganizations.add(new Organization("Coursera", "https://www.coursera.org/", YearMonth.of(2013, 3), YearMonth.of(2013, 5), "\"Functional Programming Principles in Scala\" by Martin Odersky", null));
         eduOrganizations.add(new Organization("Luxoft", "https://luxoft.com/", YearMonth.of(2011, 3), YearMonth.of(2011, 4), "Курс \"Объектно-ориентированный анализ ИС. Концептуальное моделирование на UML.\"", null));
         resume.getSections().put(SectionType.EDUCATION, new ListSection<>(eduOrganizations));
-
-        System.out.println(resume);
-        System.out.println("----------------------------");
-        for (ContactType type : ContactType.values()) {
-            System.out.println(type.getTitle() + resume.getContacts().get(type));
-        }
-        System.out.println("----------------------------");
-        for (SectionType type : SectionType.values()) {
-            System.out.println(type.getTitle());
-            System.out.println(resume.getSections().get(type));
-            System.out.println();
-        }
-
+        return resume;
     }
 }
