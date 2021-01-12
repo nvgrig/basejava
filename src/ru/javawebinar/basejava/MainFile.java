@@ -29,5 +29,29 @@ public class MainFile {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
+        System.out.println("---------------------");
+        System.out.println("recursive files print");
+        try {
+            printFiles(dir);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    // recursive files print
+    public static void printFiles(File file) throws IOException {
+        File[] list = file.listFiles();
+
+        if (list == null) return;
+
+        for (File f : list) {
+            if (f.isDirectory()) {
+                printFiles(f);
+                System.out.println("Dir:" + f.getName());
+            } else {
+                System.out.println("File:" + f.getName());
+            }
+        }
     }
 }
