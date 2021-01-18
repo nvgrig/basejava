@@ -32,6 +32,7 @@ public class MainFile {
 
         System.out.println("---------------------");
         System.out.println("recursive files print");
+        System.out.println("---------------------");
         try {
             printFiles(dir);
         } catch (IOException e) {
@@ -47,10 +48,10 @@ public class MainFile {
 
         for (File f : list) {
             if (f.isDirectory()) {
+                System.out.println(f.getName());
                 printFiles(f);
-                System.out.println("Dir:" + f.getName());
             } else {
-                System.out.println("File:" + f.getName());
+                System.out.println("\t" + f.getName());
             }
         }
     }
