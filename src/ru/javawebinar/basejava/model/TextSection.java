@@ -3,20 +3,20 @@ package ru.javawebinar.basejava.model;
 import java.util.Objects;
 
 public class TextSection extends AbstractSection {
-    private final String value;
+    private final String content;
 
-    public TextSection(String value) {
-        Objects.requireNonNull(value, "Text must not be null");
-        this.value = value;
+    public TextSection(String content) {
+        Objects.requireNonNull(content, "Content must not be null");
+        this.content = content;
     }
 
-    public String getValue() {
-        return value;
+    public String getContent() {
+        return content;
     }
 
     @Override
     public String toString() {
-        return value;
+        return content;
     }
 
     @Override
@@ -26,11 +26,11 @@ public class TextSection extends AbstractSection {
 
         TextSection that = (TextSection) o;
 
-        return value.equals(that.value);
+        return content.equals(that.content);
     }
 
     @Override
     public int hashCode() {
-        return value.hashCode();
+        return content.hashCode();
     }
 }
