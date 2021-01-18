@@ -1,24 +1,27 @@
 package ru.javawebinar.basejava.model;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-public class OrganizationSection<T> extends AbstractSection {
-    private final List<T> value;
+public class OrganizationSection extends AbstractSection {
+    private final List<Organization> organizations;
 
-    public OrganizationSection(List<T> value) {
-        Objects.requireNonNull(value, "Place/text must not be null");
-        this.value = value;
+    public OrganizationSection(Organization...organizations) {
+        this(Arrays.asList(organizations));
+    }
+    public OrganizationSection(List<Organization> organizations) {
+        Objects.requireNonNull(organizations, "Organization must not be null");
+        this.organizations = organizations;
+    }
+
+    public List<Organization> getOrganizations() {
+        return organizations;
     }
 
     @Override
     public String toString() {
-        StringBuilder result = new StringBuilder();
-        for (T val: value) {
-            result.append(val);
-            result.append("\n");
-        }
-        return result.toString();
+        return organizations.toString();
     }
 
     @Override
@@ -26,13 +29,13 @@ public class OrganizationSection<T> extends AbstractSection {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        OrganizationSection<?> that = (OrganizationSection<?>) o;
+        OrganizationSection that = (OrganizationSection) o;
 
-        return value.equals(that.value);
+        return organizations.equals(that.organizations);
     }
 
     @Override
     public int hashCode() {
-        return value.hashCode();
+        return organizations.hashCode();
     }
 }
