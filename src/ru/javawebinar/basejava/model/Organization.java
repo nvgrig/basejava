@@ -13,14 +13,14 @@ import static ru.javawebinar.basejava.util.DateUtil.NOW;
 
 public class Organization {
     private final Link homePage;
-    private List<CareerPeriod> careerPeriods = new ArrayList<>();
+    private List<Position> positions = new ArrayList<>();
 
-    public Organization(String linkName, String linkUrl, CareerPeriod...careerPeriods) {
-        this(new Link(linkName, linkUrl), Arrays.asList(careerPeriods));
+    public Organization(String linkName, String linkUrl, Position...positions) {
+        this(new Link(linkName, linkUrl), Arrays.asList(positions));
     }
-    public Organization(Link homePage, List<CareerPeriod> careerPeriods) {
+    public Organization(Link homePage, List<Position> positions) {
         this.homePage = homePage;
-        this.careerPeriods = careerPeriods;
+        this.positions = positions;
     }
 
     @Override
@@ -31,36 +31,36 @@ public class Organization {
         Organization that = (Organization) o;
 
         if (!homePage.equals(that.homePage)) return false;
-        return careerPeriods.equals(that.careerPeriods);
+        return positions.equals(that.positions);
     }
 
     @Override
     public int hashCode() {
         int result = homePage.hashCode();
-        result = 31 * result + careerPeriods.hashCode();
+        result = 31 * result + positions.hashCode();
         return result;
     }
 
     @Override
     public String toString() {
-        return "Organization(" + homePage + ", " + careerPeriods + ")";
+        return "Organization(" + homePage + ", " + positions + ")";
     }
 
-    public static class CareerPeriod {
+    public static class Position {
         private final LocalDate beginDate;
         private final LocalDate finishDate;
         private final String title;
         private final String description;
 
-        public CareerPeriod(int startYear, Month startMonth, String title, String description) {
+        public Position(int startYear, Month startMonth, String title, String description) {
             this(DateUtil.of(startYear, startMonth), NOW, title, description);
         }
 
-        public CareerPeriod(int startYear, Month startMonth, int endYear, Month endMonth, String title, String description) {
+        public Position(int startYear, Month startMonth, int endYear, Month endMonth, String title, String description) {
             this(DateUtil.of(startYear, startMonth), DateUtil.of(endYear, endMonth), title, description);
         }
 
-        public CareerPeriod(LocalDate beginDate, LocalDate finishDate, String title, String description) {
+        public Position(LocalDate beginDate, LocalDate finishDate, String title, String description) {
             Objects.requireNonNull(beginDate, "beginDate must not be null");
             Objects.requireNonNull(finishDate, "finishDate must not be null");
             Objects.requireNonNull(title, "title  must not be null");
@@ -91,7 +91,7 @@ public class Organization {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
 
-            CareerPeriod that = (CareerPeriod) o;
+            Position that = (Position) o;
 
             if (!beginDate.equals(that.beginDate)) return false;
             if (!finishDate.equals(that.finishDate)) return false;
@@ -110,7 +110,7 @@ public class Organization {
 
         @Override
         public String toString() {
-            return "CareerPeriod("+ beginDate + ", " + finishDate + ", " + title + ", " + description + ")";
+            return "Position("+ beginDate + ", " + finishDate + ", " + title + ", " + description + ")";
         }
     }
 }
