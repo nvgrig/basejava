@@ -14,11 +14,19 @@ import java.util.stream.Collectors;
 public abstract class AbstractPathStorage extends AbstractStorage<Path> {
     private final Path directory;
 
+    SerializationStrategy strategy;
+
     // simple write operation
-    protected abstract void doWrite(Resume resume, OutputStream outputStream) throws IOException;
+    protected void doWrite(Resume resume, OutputStream outputStream) throws IOException {
+        setStrategy(new ObjectStreamStrategy());
+        strategy.strategyWrite(resume, outputStream);
+    };
 
     // simple read operation
-    protected abstract Resume doRead(InputStream inputStream) throws IOException;
+    protected Resume doRead(InputStream inputStream) throws IOException {
+        setStrategy(new ObjectStreamStrategy());
+        return strategy.strategyRead(inputStream);
+    };
 
     protected AbstractPathStorage(String dir) {
         directory = Paths.get(dir);
@@ -26,6 +34,10 @@ public abstract class AbstractPathStorage extends AbstractStorage<Path> {
         if (!Files.isDirectory(directory) || !Files.isWritable(directory)) {
             throw new IllegalArgumentException(dir + " is not a directory or is not writable");
         }
+    }
+
+    public void setStrategy(SerializationStrategy strategy) {
+        this.strategy = strategy;
     }
 
     @Override
