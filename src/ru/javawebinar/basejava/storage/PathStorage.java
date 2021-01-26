@@ -11,29 +11,29 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-public abstract class AbstractPathStorage extends AbstractStorage<Path> {
+public class PathStorage extends AbstractStorage<Path> {
     private final Path directory;
 
     SerializationStrategy strategy;
 
     // simple write operation
     protected void doWrite(Resume resume, OutputStream outputStream) throws IOException {
-        setStrategy(new ObjectStreamStrategy());
         strategy.strategyWrite(resume, outputStream);
-    };
+    }
 
     // simple read operation
     protected Resume doRead(InputStream inputStream) throws IOException {
-        setStrategy(new ObjectStreamStrategy());
         return strategy.strategyRead(inputStream);
-    };
+    }
 
-    protected AbstractPathStorage(String dir) {
+    protected PathStorage(String dir, SerializationStrategy strategy) {
         directory = Paths.get(dir);
         Objects.requireNonNull(directory, "directory must not be null");
         if (!Files.isDirectory(directory) || !Files.isWritable(directory)) {
             throw new IllegalArgumentException(dir + " is not a directory or is not writable");
         }
+        Objects.requireNonNull(strategy, "strategy must not be null");
+        this.strategy = strategy;
     }
 
     public void setStrategy(SerializationStrategy strategy) {
