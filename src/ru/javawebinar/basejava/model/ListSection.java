@@ -13,6 +13,7 @@ public class ListSection extends AbstractSection {
     public ListSection(String...items) {
         this(Arrays.asList(items));
     }
+
     public ListSection(List<String> items) {
         Objects.requireNonNull(items, "Items must not be null");
         this.items = items;
