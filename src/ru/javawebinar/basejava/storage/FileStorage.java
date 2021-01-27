@@ -14,16 +14,6 @@ public class FileStorage extends AbstractStorage<File> {
 
     SerializationStrategy strategy;
 
-    // simple write operation
-    protected void doWrite(Resume resume, OutputStream outputStream) throws IOException {
-        strategy.strategyWrite(resume, outputStream);
-    }
-
-    // simple read operation
-    protected Resume doRead(InputStream inputStream) throws IOException {
-        return strategy.strategyRead(inputStream);
-    }
-
     protected FileStorage(File directory, SerializationStrategy strategy) {
         Objects.requireNonNull(directory, "directory must not be null");
         if (!directory.isDirectory()) {
@@ -37,14 +27,10 @@ public class FileStorage extends AbstractStorage<File> {
         this.strategy = strategy;
     }
 
-    public void setStrategy(SerializationStrategy strategy) {
-        this.strategy = strategy;
-    }
-
     @Override
     protected void doUpdate(Resume resume, File file) {
         try {
-            doWrite(resume, new BufferedOutputStream(new FileOutputStream(file)));
+            strategy.strategyWrite(resume, new BufferedOutputStream(new FileOutputStream(file)));
         } catch (IOException e) {
             throw new StorageException("File write error", resume.getUuid(), e);
         }
@@ -63,7 +49,7 @@ public class FileStorage extends AbstractStorage<File> {
     @Override
     protected Resume doGet(File file) {
         try {
-            return doRead(new BufferedInputStream(new FileInputStream(file)));
+            return strategy.strategyRead(new BufferedInputStream(new FileInputStream(file)));
         } catch (IOException e) {
             throw new StorageException("File read error", file.getName(), e);
         }
