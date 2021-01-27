@@ -1,5 +1,7 @@
 package ru.javawebinar.basejava.storage;
 
+import ru.javawebinar.basejava.storage.strategy.ObjectStreamStrategy;
+
 import java.io.File;
 
 public class ObjectStreamFileStorageTest extends AbstractStorageTest {
