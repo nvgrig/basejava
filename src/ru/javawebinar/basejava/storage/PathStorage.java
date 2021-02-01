@@ -18,7 +18,7 @@ import java.util.stream.Stream;
 public class PathStorage extends AbstractStorage<Path> {
     private final Path directory;
 
-    SerializationStrategy strategy;
+    private SerializationStrategy strategy;
 
     protected PathStorage(String dir, SerializationStrategy strategy) {
         directory = Paths.get(dir);
