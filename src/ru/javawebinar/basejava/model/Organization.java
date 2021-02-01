@@ -1,7 +1,11 @@
 package ru.javawebinar.basejava.model;
 
 import ru.javawebinar.basejava.util.DateUtil;
+import ru.javawebinar.basejava.util.LocalDateAdapter;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -12,15 +16,20 @@ import java.util.Objects;
 
 import static ru.javawebinar.basejava.util.DateUtil.NOW;
 
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Organization implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
-    private final Link homePage;
-    private final List<Position> positions;
+    private Link homePage;
+    private List<Position> positions;
 
-    public Organization(String linkName, String linkUrl, Position...positions) {
+    public Organization() {
+    }
+
+    public Organization(String linkName, String linkUrl, Position... positions) {
         this(new Link(linkName, linkUrl), Arrays.asList(positions));
     }
+
     public Organization(Link homePage, List<Position> positions) {
         this.homePage = homePage;
         this.positions = positions;
@@ -30,18 +39,13 @@ public class Organization implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         Organization that = (Organization) o;
-
-        if (!homePage.equals(that.homePage)) return false;
-        return positions.equals(that.positions);
+        return Objects.equals(homePage, that.homePage) && Objects.equals(positions, that.positions);
     }
 
     @Override
     public int hashCode() {
-        int result = homePage.hashCode();
-        result = 31 * result + positions.hashCode();
-        return result;
+        return Objects.hash(homePage, positions);
     }
 
     @Override
@@ -49,13 +53,17 @@ public class Organization implements Serializable {
         return "Organization(" + homePage + ", " + positions + ")";
     }
 
-    public static class Position implements Serializable{
-        @Serial
-        private static final long serialVersionUID = 1L;
-        private final LocalDate beginDate;
-        private final LocalDate finishDate;
-        private final String title;
-        private final String description;
+    @XmlAccessorType(XmlAccessType.FIELD)
+    public static class Position implements Serializable {
+        @XmlJavaTypeAdapter(LocalDateAdapter.class)
+        private LocalDate beginDate;
+        @XmlJavaTypeAdapter(LocalDateAdapter.class)
+        private LocalDate finishDate;
+        private String title;
+        private String description;
+
+        public Position() {
+        }
 
         public Position(int startYear, Month startMonth, String title, String description) {
             this(DateUtil.of(startYear, startMonth), NOW, title, description);
@@ -95,27 +103,18 @@ public class Organization implements Serializable {
         public boolean equals(Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
-
-            Position that = (Position) o;
-
-            if (!beginDate.equals(that.beginDate)) return false;
-            if (!finishDate.equals(that.finishDate)) return false;
-            if (!title.equals(that.title)) return false;
-            return Objects.equals(description, that.description);
+            Position position = (Position) o;
+            return beginDate.equals(position.beginDate) && finishDate.equals(position.finishDate) && title.equals(position.title) && Objects.equals(description, position.description);
         }
 
         @Override
         public int hashCode() {
-            int result = beginDate.hashCode();
-            result = 31 * result + finishDate.hashCode();
-            result = 31 * result + title.hashCode();
-            result = 31 * result + (description != null ? description.hashCode() : 0);
-            return result;
+            return Objects.hash(beginDate, finishDate, title, description);
         }
 
         @Override
         public String toString() {
-            return "Position("+ beginDate + ", " + finishDate + ", " + title + ", " + description + ")";
+            return "Position(" + beginDate + ", " + finishDate + ", " + title + ", " + description + ")";
         }
     }
 }

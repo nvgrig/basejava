@@ -46,8 +46,9 @@ public abstract class AbstractStorageTest {
 
     @Test
     public void update() {
-        storage.update(RESUME_1);
-        Assert.assertEquals(RESUME_1, storage.get(RESUME_1));
+        Resume testResume = new Resume(RESUME_1.getUuid(), "Test Resume");
+        storage.update(testResume);
+        Assert.assertEquals(testResume, storage.get(testResume));
     }
 
     @Test(expected = NotExistStorageException.class)
