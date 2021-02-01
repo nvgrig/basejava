@@ -35,7 +35,7 @@ public class PathStorage extends AbstractStorage<Path> {
         try {
             strategy.strategyWrite(resume, new BufferedOutputStream(Files.newOutputStream(path)));
         } catch (IOException e) {
-            throw new StorageException("File write error", resume.getUuid(), e);
+            throw new StorageException("Path write error", resume.getUuid(), e);
         }
     }
 
@@ -44,7 +44,7 @@ public class PathStorage extends AbstractStorage<Path> {
         try {
             Files.createFile(path);
         } catch (IOException e) {
-            throw new StorageException("Can't create file +" + path.toAbsolutePath().toString(), path.getFileName().toString(), e);
+            throw new StorageException("Can't create path +" + path, getFileName(path), e);
         }
         doUpdate(resume, path);
     }
@@ -54,7 +54,7 @@ public class PathStorage extends AbstractStorage<Path> {
         try {
             return strategy.strategyRead(new BufferedInputStream(Files.newInputStream(path)));
         } catch (IOException e) {
-            throw new StorageException("File read error", path.getFileName().toString(), e);
+            throw new StorageException("Path read error", getFileName(path), e);
         }
     }
 
@@ -63,7 +63,7 @@ public class PathStorage extends AbstractStorage<Path> {
         try {
             Files.delete(path);
         } catch (IOException e) {
-            throw new StorageException("File delete error", path.getFileName().toString());
+            throw new StorageException("Path delete error", getFileName(path));
         }
     }
 
@@ -79,7 +79,7 @@ public class PathStorage extends AbstractStorage<Path> {
 
     @Override
     protected boolean isResumeExist(Path path) {
-        return Files.exists(path);
+        return Files.isRegularFile(path);
     }
 
     @Override
@@ -97,8 +97,12 @@ public class PathStorage extends AbstractStorage<Path> {
         try {
             listFiles = Files.list(directory);
         } catch (IOException e) {
-            throw new StorageException("Directory read error", null);
+            throw new StorageException("Directory read error", null, e);
         }
         return listFiles;
+    }
+
+    private String getFileName(Path path) {
+        return path.getFileName().toString();
     }
 }

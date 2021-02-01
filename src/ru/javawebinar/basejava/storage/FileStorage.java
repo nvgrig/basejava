@@ -96,7 +96,7 @@ public class FileStorage extends AbstractStorage<File> {
     public File[] getListFiles() {
         File[] listFiles = directory.listFiles();
         if (listFiles == null) {
-            throw new StorageException("Directory read error", null);
+            throw new StorageException("Directory read error");
         }
         return listFiles;
     }
