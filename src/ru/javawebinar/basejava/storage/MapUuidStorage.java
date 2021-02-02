@@ -44,8 +44,8 @@ public class MapUuidStorage extends AbstractStorage<String> {
     }
 
     @Override
-    protected String getSearchKey(Resume resume) {
-        return resume.getUuid();
+    protected String getSearchKey(String uuid) {
+        return uuid;
     }
 
     @Override

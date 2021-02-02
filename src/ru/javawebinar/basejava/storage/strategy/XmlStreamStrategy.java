@@ -7,7 +7,7 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 
 public class XmlStreamStrategy implements SerializationStrategy {
-    private XmlParser xmlParser;
+    private final XmlParser xmlParser;
 
     public XmlStreamStrategy() {
         xmlParser = new XmlParser(

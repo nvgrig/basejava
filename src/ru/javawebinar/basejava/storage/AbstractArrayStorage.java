@@ -58,7 +58,7 @@ public abstract class AbstractArrayStorage extends AbstractStorage<Integer> {
     }
 
     // resume position search in storage
-    protected abstract Integer getSearchKey(Resume resume);
+    protected abstract Integer getSearchKey(String uuid);
 
     // saving in array
     protected abstract void saveInArray(int index, Resume resume);

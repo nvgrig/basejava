@@ -73,8 +73,8 @@ public class PathStorage extends AbstractStorage<Path> {
     }
 
     @Override
-    protected Path getSearchKey(Resume resume) {
-        return directory.resolve(resume.getUuid());
+    protected Path getSearchKey(String uuid) {
+        return directory.resolve(uuid);
     }
 
     @Override
