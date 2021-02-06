@@ -28,5 +28,8 @@ public class MainDate {
 
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yy/MM/dd");
         System.out.println(dtf.format(ldt));
+
+        System.out.println(ld.toString());
+        System.out.println(LocalDate.parse(ld.toString()));
     }
 }
