@@ -48,7 +48,7 @@ public class Organization implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Organization that = (Organization) o;
-        return Objects.equals(homePage, that.homePage) && Objects.equals(positions, that.positions);
+        return homePage.equals(that.homePage) && positions.equals(that.positions);
     }
 
     @Override
