@@ -45,11 +45,7 @@ public class DataStreamStrategy implements SerializationStrategy {
                 for (Organization organization : ((OrganizationSection) section).getOrganizations()) {
                     Link homePage = organization.getHomePage();
                     dos.writeUTF(homePage.getName());
-                    try {
-                        dos.writeUTF(homePage.getUrl());
-                    } catch (NullPointerException e) {
-                        dos.writeUTF("null");
-                    }
+                    dos.writeUTF((homePage.getUrl() == null) ? "null" : homePage.getUrl());
                     List<Organization.Position> positions = organization.getPositions();
                     dos.writeInt(positions.size());
                     for (Organization.Position position : positions) {
@@ -105,12 +101,7 @@ public class DataStreamStrategy implements SerializationStrategy {
                 for (int i = 0; i < sectionSize; i++) {
                     String linkName = dis.readUTF();
                     String linkUrl = dis.readUTF();
-                    Link homePage;
-                    if (linkUrl.equals("null")) {
-                        homePage = new Link(linkName, null);
-                    } else {
-                        homePage = new Link(linkName, linkUrl);
-                    }
+                    Link homePage = (linkUrl.equals("null")) ? new Link(linkName, null) : new Link(linkName, linkUrl);
                     int positionsSize = dis.readInt();
                     List<Organization.Position> positions = new ArrayList<>(positionsSize);
                     for (int j = 0; j < positionsSize; j++) {
@@ -118,13 +109,9 @@ public class DataStreamStrategy implements SerializationStrategy {
                         String endDate = dis.readUTF();
                         String title = dis.readUTF();
                         String description = dis.readUTF();
-                        if (description.equals("null")) {
-                            positions.add(new Organization.Position(LocalDate.parse(beginDate),
-                                    LocalDate.parse(endDate), title, null));
-                        } else {
-                            positions.add(new Organization.Position(LocalDate.parse(beginDate),
-                                    LocalDate.parse(endDate), title, description));
-                        }
+                        positions.add((description.equals("null")) ? new Organization.Position(LocalDate.parse(beginDate),
+                                LocalDate.parse(endDate), title, null) : new Organization.Position(LocalDate.parse(beginDate),
+                                LocalDate.parse(endDate), title, description));
                     }
                     organizations.add(new Organization(homePage, positions));
                 }
