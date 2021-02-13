@@ -17,15 +17,30 @@ public class DataStreamStrategy implements SerializationStrategy {
             dos.writeUTF(resume.getFullName());
             Map<ContactType, String> contacts = resume.getContacts();
             dos.writeInt(contacts.size());
-            for (Map.Entry<ContactType, String> entry : contacts.entrySet()) {
+            contacts.forEach((type, value) -> {
+                try {
+                    dos.writeUTF(type.name());
+                    dos.writeUTF(value);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+            /*for (Map.Entry<ContactType, String> entry : contacts.entrySet()) {
                 dos.writeUTF(entry.getKey().name());
                 dos.writeUTF(entry.getValue());
-            }
+            }*/
             Map<SectionType, AbstractSection> sections = resume.getSections();
             dos.writeInt(sections.size());
-            for (Map.Entry<SectionType, AbstractSection> entry : sections.entrySet()) {
+            sections.entrySet().forEach(entry -> {
+                try {
+                    sectionDataWrite(dos, entry);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+            /*for (Map.Entry<SectionType, AbstractSection> entry : sections.entrySet()) {
                 sectionDataWrite(dos, entry);
-            }
+            }*/
         }
     }
 
@@ -49,13 +64,24 @@ public class DataStreamStrategy implements SerializationStrategy {
                     dos.writeUTF((url == null) ? "null" : url);
                     List<Organization.Position> positions = organization.getPositions();
                     dos.writeInt(positions.size());
-                    for (Organization.Position position : positions) {
+                    positions.forEach(position -> {
+                        try {
+                            dos.writeUTF(position.getBeginDate().toString());
+                            dos.writeUTF(position.getFinishDate().toString());
+                            dos.writeUTF(position.getTitle());
+                            String description = position.getDescription();
+                            dos.writeUTF((description == null) ? "null" : description);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    });
+                    /*for (Organization.Position position : positions) {
                         dos.writeUTF(position.getBeginDate().toString());
                         dos.writeUTF(position.getFinishDate().toString());
                         dos.writeUTF(position.getTitle());
                         String description = position.getDescription();
                         dos.writeUTF((description == null) ? "null" : description);
-                    }
+                    }*/
                 }
             }
         }
@@ -99,7 +125,7 @@ public class DataStreamStrategy implements SerializationStrategy {
                 for (int i = 0; i < sectionSize; i++) {
                     String linkName = dis.readUTF();
                     String linkUrl = dis.readUTF();
-                    Link homePage = (linkUrl.equals("null")) ? new Link(linkName, null) : new Link(linkName, linkUrl);
+                    Link homePage = new Link(linkName, (linkUrl.equals("null") ? null : linkUrl));
                     int positionsSize = dis.readInt();
                     List<Organization.Position> positions = new ArrayList<>(positionsSize);
                     for (int j = 0; j < positionsSize; j++) {
