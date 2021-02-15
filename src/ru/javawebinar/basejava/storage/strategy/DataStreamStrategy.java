@@ -17,33 +17,25 @@ public class DataStreamStrategy implements SerializationStrategy {
             dos.writeUTF(resume.getFullName());
             Map<ContactType, String> contacts = resume.getContacts();
             dos.writeInt(contacts.size());
-            contacts.forEach((type, value) -> {
-                try {
-                    dos.writeUTF(type.name());
-                    dos.writeUTF(value);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            });
-            /*for (Map.Entry<ContactType, String> entry : contacts.entrySet()) {
+            for (Map.Entry<ContactType, String> entry : contacts.entrySet()) {
                 dos.writeUTF(entry.getKey().name());
                 dos.writeUTF(entry.getValue());
-            }*/
+            }
             Map<SectionType, AbstractSection> sections = resume.getSections();
-            dos.writeInt(sections.size());
-            sections.entrySet().forEach(entry -> {
-                try {
-                    sectionDataWrite(dos, entry);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            });
-            /*for (Map.Entry<SectionType, AbstractSection> entry : sections.entrySet()) {
-                sectionDataWrite(dos, entry);
-            }*/
+            writeWithException(dos, sections, (dos1, entry) -> sectionDataWrite(dos1, entry));
         }
     }
 
+    private interface Writer<T, U> {
+        void write(T t, U u) throws IOException;
+    }
+
+    private void writeWithException(DataOutputStream dos, Map<SectionType, AbstractSection> collection, Writer<DataOutputStream, Map.Entry<SectionType, AbstractSection>> writer) throws IOException {
+        dos.writeInt(collection.size());
+        for (Map.Entry<SectionType, AbstractSection> entry: collection.entrySet()) {
+            writer.write(dos, entry);
+        }
+    }
     private void sectionDataWrite(DataOutputStream dos, Map.Entry<SectionType, AbstractSection> entry) throws IOException {
         dos.writeUTF(entry.getKey().name());
         AbstractSection section = entry.getValue();
