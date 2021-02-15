@@ -5,6 +5,7 @@ import ru.javawebinar.basejava.model.*;
 import java.io.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -15,14 +16,8 @@ public class DataStreamStrategy implements SerializationStrategy {
         try (DataOutputStream dos = new DataOutputStream(outputStream)) {
             dos.writeUTF(resume.getUuid());
             dos.writeUTF(resume.getFullName());
-            Map<ContactType, String> contacts = resume.getContacts();
-            dos.writeInt(contacts.size());
-            for (Map.Entry<ContactType, String> entry : contacts.entrySet()) {
-                dos.writeUTF(entry.getKey().name());
-                dos.writeUTF(entry.getValue());
-            }
-            Map<SectionType, AbstractSection> sections = resume.getSections();
-            writeWithException(dos, sections, (dos1, entry) -> sectionDataWrite(dos1, entry));
+            writeWithException(dos, resume.getContacts().entrySet(), DataStreamStrategy.this::contactDataWrite);
+            writeWithException(dos, resume.getSections().entrySet(), DataStreamStrategy.this::sectionDataWrite);
         }
     }
 
@@ -30,52 +25,45 @@ public class DataStreamStrategy implements SerializationStrategy {
         void write(T t, U u) throws IOException;
     }
 
-    private void writeWithException(DataOutputStream dos, Map<SectionType, AbstractSection> collection, Writer<DataOutputStream, Map.Entry<SectionType, AbstractSection>> writer) throws IOException {
+    private <T> void writeWithException(DataOutputStream dos, Collection<T> collection, Writer<DataOutputStream, T> writer) throws IOException {
         dos.writeInt(collection.size());
-        for (Map.Entry<SectionType, AbstractSection> entry: collection.entrySet()) {
+        for (T entry: collection) {
             writer.write(dos, entry);
         }
     }
+
+    private void contactDataWrite(DataOutputStream dos, Map.Entry<ContactType, String> entry) throws  IOException {
+        dos.writeUTF(entry.getKey().name());
+        dos.writeUTF(entry.getValue());
+    }
+
+    private void contentDataWrite(DataOutputStream dos, String content) throws  IOException {
+        dos.writeUTF(content);
+    }
+
+    private void positionDataWrite(DataOutputStream dos, Organization.Position position) throws  IOException {
+        dos.writeUTF(position.getBeginDate().toString());
+        dos.writeUTF(position.getFinishDate().toString());
+        dos.writeUTF(position.getTitle());
+        String description = position.getDescription();
+        dos.writeUTF((description == null) ? "null" : description);
+    }
+
+    private void organizationDataWrite(DataOutputStream dos, Organization organization) throws  IOException {
+        Link homePage = organization.getHomePage();
+        dos.writeUTF(homePage.getName());
+        String url = homePage.getUrl();
+        dos.writeUTF((url == null) ? "null" : url);
+        writeWithException(dos, organization.getPositions(), this::positionDataWrite);
+    }
+
     private void sectionDataWrite(DataOutputStream dos, Map.Entry<SectionType, AbstractSection> entry) throws IOException {
         dos.writeUTF(entry.getKey().name());
         AbstractSection section = entry.getValue();
         switch (entry.getKey()) {
             case OBJECTIVE, PERSONAL -> dos.writeUTF(((TextSection) section).getContent());
-            case ACHIEVEMENT, QUALIFICATIONS -> {
-                dos.writeInt(((ListSection) section).getItems().size());
-                for (String content : ((ListSection) section).getItems()) {
-                    dos.writeUTF(content);
-                }
-            }
-            case EXPERIENCE, EDUCATION -> {
-                dos.writeInt(((OrganizationSection) section).getOrganizations().size());
-                for (Organization organization : ((OrganizationSection) section).getOrganizations()) {
-                    Link homePage = organization.getHomePage();
-                    dos.writeUTF(homePage.getName());
-                    String url = homePage.getUrl();
-                    dos.writeUTF((url == null) ? "null" : url);
-                    List<Organization.Position> positions = organization.getPositions();
-                    dos.writeInt(positions.size());
-                    positions.forEach(position -> {
-                        try {
-                            dos.writeUTF(position.getBeginDate().toString());
-                            dos.writeUTF(position.getFinishDate().toString());
-                            dos.writeUTF(position.getTitle());
-                            String description = position.getDescription();
-                            dos.writeUTF((description == null) ? "null" : description);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    });
-                    /*for (Organization.Position position : positions) {
-                        dos.writeUTF(position.getBeginDate().toString());
-                        dos.writeUTF(position.getFinishDate().toString());
-                        dos.writeUTF(position.getTitle());
-                        String description = position.getDescription();
-                        dos.writeUTF((description == null) ? "null" : description);
-                    }*/
-                }
-            }
+            case ACHIEVEMENT, QUALIFICATIONS -> writeWithException(dos, ((ListSection) section).getItems(), this::contentDataWrite);
+            case EXPERIENCE, EDUCATION -> writeWithException(dos, ((OrganizationSection) section).getOrganizations(), this::organizationDataWrite);
         }
     }
 
