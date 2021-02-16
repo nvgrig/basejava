@@ -27,21 +27,21 @@ public class DataStreamStrategy implements SerializationStrategy {
 
     private <T> void writeWithException(DataOutputStream dos, Collection<T> collection, Writer<DataOutputStream, T> writer) throws IOException {
         dos.writeInt(collection.size());
-        for (T entry: collection) {
+        for (T entry : collection) {
             writer.write(dos, entry);
         }
     }
 
-    private void contactDataWrite(DataOutputStream dos, Map.Entry<ContactType, String> entry) throws  IOException {
+    private void contactDataWrite(DataOutputStream dos, Map.Entry<ContactType, String> entry) throws IOException {
         dos.writeUTF(entry.getKey().name());
         dos.writeUTF(entry.getValue());
     }
 
-    private void contentDataWrite(DataOutputStream dos, String content) throws  IOException {
+    private void contentDataWrite(DataOutputStream dos, String content) throws IOException {
         dos.writeUTF(content);
     }
 
-    private void positionDataWrite(DataOutputStream dos, Organization.Position position) throws  IOException {
+    private void positionDataWrite(DataOutputStream dos, Organization.Position position) throws IOException {
         dos.writeUTF(position.getBeginDate().toString());
         dos.writeUTF(position.getFinishDate().toString());
         dos.writeUTF(position.getTitle());
@@ -49,7 +49,7 @@ public class DataStreamStrategy implements SerializationStrategy {
         dos.writeUTF((description == null) ? "null" : description);
     }
 
-    private void organizationDataWrite(DataOutputStream dos, Organization organization) throws  IOException {
+    private void organizationDataWrite(DataOutputStream dos, Organization organization) throws IOException {
         Link homePage = organization.getHomePage();
         dos.writeUTF(homePage.getName());
         String url = homePage.getUrl();
@@ -73,54 +73,71 @@ public class DataStreamStrategy implements SerializationStrategy {
             String uuid = dis.readUTF();
             String fullName = dis.readUTF();
             Resume resume = new Resume(uuid, fullName);
-            int size = dis.readInt();
-            for (int i = 0; i < size; i++) {
-                resume.addContact(ContactType.valueOf(dis.readUTF()), dis.readUTF());
-            }
-            size = dis.readInt();
-            for (int i = 0; i < size; i++) {
-                SectionType sectionType = SectionType.valueOf(dis.readUTF());
-                resume.addSection(sectionType, sectionDataRead(dis, sectionType));
-            }
+            readWithException(dis, resume, "Contacts reading", this::contactDataRead);
+            readWithException(dis, resume, "Sections reading", this::sectionDataRead);
             return resume;
         }
     }
 
-    private AbstractSection sectionDataRead(DataInputStream dis, SectionType sectionType) throws IOException {
-        switch (sectionType) {
-            case OBJECTIVE, PERSONAL -> {
-                return new TextSection(dis.readUTF());
-            }
-            case ACHIEVEMENT, QUALIFICATIONS -> {
-                int sectionSize = dis.readInt();
-                List<String> items = new ArrayList<>(sectionSize);
-                for (int i = 0; i < sectionSize; i++) {
-                    items.add(dis.readUTF());
-                }
-                return new ListSection(items);
-            }
-            case EXPERIENCE, EDUCATION -> {
-                int sectionSize = dis.readInt();
-                List<Organization> organizations = new ArrayList<>(sectionSize);
-                for (int i = 0; i < sectionSize; i++) {
-                    String linkName = dis.readUTF();
-                    String linkUrl = dis.readUTF();
-                    Link homePage = new Link(linkName, (linkUrl.equals("null") ? null : linkUrl));
-                    int positionsSize = dis.readInt();
-                    List<Organization.Position> positions = new ArrayList<>(positionsSize);
-                    for (int j = 0; j < positionsSize; j++) {
-                        String beginDate = dis.readUTF();
-                        String endDate = dis.readUTF();
-                        String title = dis.readUTF();
-                        String description = dis.readUTF();
-                        positions.add(new Organization.Position(LocalDate.parse(beginDate),
-                                LocalDate.parse(endDate), title, (description.equals("null")) ? null : description));
-                    }
-                    organizations.add(new Organization(homePage, positions));
-                }
-                return new OrganizationSection(organizations);
+    private interface Reader<DataInputStream, T, U> {
+        void read(DataInputStream dis, T t, U u) throws IOException;
+    }
+
+    private <T, U> void readWithException(DataInputStream dis, T t, U u, Reader<DataInputStream, T, U> reader) throws IOException {
+        reader.read(dis, t, u);
+    }
+
+    private void contactDataRead(DataInputStream dis, Resume resume, String string) throws IOException {
+        int size = dis.readInt();
+        for (int i = 0; i < size; i++) {
+            resume.addContact(ContactType.valueOf(dis.readUTF()), dis.readUTF());
+        }
+    }
+
+    private void contentDataRead(DataInputStream dis, Resume resume, SectionType sectionType) throws IOException {
+        int sectionSize = dis.readInt();
+        List<String> items = new ArrayList<>(sectionSize);
+        for (int i = 0; i < sectionSize; i++) {
+            items.add(dis.readUTF());
+        }
+        resume.addSection(sectionType, new ListSection(items));
+    }
+
+    private void positionDataRead(DataInputStream dis, List<Organization> organizations, Link homePage) throws IOException {
+        int positionsSize = dis.readInt();
+        List<Organization.Position> positions = new ArrayList<>(positionsSize);
+        for (int i = 0; i < positionsSize; i++) {
+            String beginDate = dis.readUTF();
+            String endDate = dis.readUTF();
+            String title = dis.readUTF();
+            String description = dis.readUTF();
+            positions.add(new Organization.Position(LocalDate.parse(beginDate),
+                    LocalDate.parse(endDate), title, (description.equals("null")) ? null : description));
+        }
+        organizations.add(new Organization(homePage, positions));
+    }
+
+    private void organizationDataRead(DataInputStream dis, Resume resume, SectionType sectionType) throws IOException {
+        int sectionSize = dis.readInt();
+        List<Organization> organizations = new ArrayList<>(sectionSize);
+        for (int i = 0; i < sectionSize; i++) {
+            String linkName = dis.readUTF();
+            String linkUrl = dis.readUTF();
+            Link homePage = new Link(linkName, (linkUrl.equals("null") ? null : linkUrl));
+            readWithException(dis, organizations, homePage, this::positionDataRead);
+        }
+        resume.addSection(sectionType, new OrganizationSection(organizations));
+    }
+
+    private void sectionDataRead(DataInputStream dis, Resume resume, String string) throws IOException {
+        int sectionSize = dis.readInt();
+        for (int i = 0; i < sectionSize; i++) {
+            SectionType sectionType = SectionType.valueOf(dis.readUTF());
+            switch (sectionType) {
+                case OBJECTIVE, PERSONAL -> resume.addSection(sectionType, new TextSection(dis.readUTF()));
+                case ACHIEVEMENT, QUALIFICATIONS -> readWithException(dis, resume, sectionType, this::contentDataRead);
+                case EXPERIENCE, EDUCATION -> readWithException(dis, resume, sectionType, this::organizationDataRead);
             }
         }
-        return null;
     }
 }
