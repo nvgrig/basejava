@@ -83,61 +83,67 @@ public class DataStreamStrategy implements SerializationStrategy {
         void read(DataInputStream dis, T t, U u) throws IOException;
     }
 
+    private interface ReadingCycle {
+        void perform() throws IOException;
+    }
+
+    private void collectionCycle(int collectionSize, ReadingCycle readingCycle) throws IOException {
+        for (int i = 0; i < collectionSize; i++) {
+            readingCycle.perform();
+        }
+    }
+
     private <T, U> void readWithException(DataInputStream dis, T t, U u, Reader<DataInputStream, T, U> reader) throws IOException {
         reader.read(dis, t, u);
     }
 
     private void contactDataRead(DataInputStream dis, Resume resume, String string) throws IOException {
         int size = dis.readInt();
-        for (int i = 0; i < size; i++) {
-            resume.addContact(ContactType.valueOf(dis.readUTF()), dis.readUTF());
-        }
+        collectionCycle(size, () -> resume.addContact(ContactType.valueOf(dis.readUTF()), dis.readUTF()));
     }
 
     private void contentDataRead(DataInputStream dis, Resume resume, SectionType sectionType) throws IOException {
         int sectionSize = dis.readInt();
         List<String> items = new ArrayList<>(sectionSize);
-        for (int i = 0; i < sectionSize; i++) {
-            items.add(dis.readUTF());
-        }
+        collectionCycle(sectionSize, () -> items.add(dis.readUTF()));
         resume.addSection(sectionType, new ListSection(items));
     }
 
     private void positionDataRead(DataInputStream dis, List<Organization> organizations, Link homePage) throws IOException {
         int positionsSize = dis.readInt();
         List<Organization.Position> positions = new ArrayList<>(positionsSize);
-        for (int i = 0; i < positionsSize; i++) {
+        collectionCycle(positionsSize, () -> {
             String beginDate = dis.readUTF();
             String endDate = dis.readUTF();
             String title = dis.readUTF();
             String description = dis.readUTF();
             positions.add(new Organization.Position(LocalDate.parse(beginDate),
                     LocalDate.parse(endDate), title, (description.equals("null")) ? null : description));
-        }
+        });
         organizations.add(new Organization(homePage, positions));
     }
 
     private void organizationDataRead(DataInputStream dis, Resume resume, SectionType sectionType) throws IOException {
         int sectionSize = dis.readInt();
         List<Organization> organizations = new ArrayList<>(sectionSize);
-        for (int i = 0; i < sectionSize; i++) {
+        collectionCycle(sectionSize, () -> {
             String linkName = dis.readUTF();
             String linkUrl = dis.readUTF();
             Link homePage = new Link(linkName, (linkUrl.equals("null") ? null : linkUrl));
-            readWithException(dis, organizations, homePage, this::positionDataRead);
-        }
+            readWithException(dis, organizations, homePage, DataStreamStrategy.this::positionDataRead);
+        });
         resume.addSection(sectionType, new OrganizationSection(organizations));
     }
 
     private void sectionDataRead(DataInputStream dis, Resume resume, String string) throws IOException {
         int sectionSize = dis.readInt();
-        for (int i = 0; i < sectionSize; i++) {
+        collectionCycle(sectionSize, () -> {
             SectionType sectionType = SectionType.valueOf(dis.readUTF());
             switch (sectionType) {
                 case OBJECTIVE, PERSONAL -> resume.addSection(sectionType, new TextSection(dis.readUTF()));
-                case ACHIEVEMENT, QUALIFICATIONS -> readWithException(dis, resume, sectionType, this::contentDataRead);
-                case EXPERIENCE, EDUCATION -> readWithException(dis, resume, sectionType, this::organizationDataRead);
+                case ACHIEVEMENT, QUALIFICATIONS -> readWithException(dis, resume, sectionType, DataStreamStrategy.this::contentDataRead);
+                case EXPERIENCE, EDUCATION -> readWithException(dis, resume, sectionType, DataStreamStrategy.this::organizationDataRead);
             }
-        }
+        });
     }
 }
