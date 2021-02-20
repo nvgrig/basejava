@@ -87,7 +87,7 @@ public class DataStreamStrategy implements SerializationStrategy {
         void perform() throws IOException;
     }
 
-    private void collectionCycle(int collectionSize, ReadingCycle readingCycle) throws IOException {
+    private void forEachWithException(int collectionSize, ReadingCycle readingCycle) throws IOException {
         for (int i = 0; i < collectionSize; i++) {
             readingCycle.perform();
         }
@@ -99,20 +99,20 @@ public class DataStreamStrategy implements SerializationStrategy {
 
     private void contactDataRead(DataInputStream dis, Resume resume, String string) throws IOException {
         int size = dis.readInt();
-        collectionCycle(size, () -> resume.addContact(ContactType.valueOf(dis.readUTF()), dis.readUTF()));
+        forEachWithException(size, () -> resume.addContact(ContactType.valueOf(dis.readUTF()), dis.readUTF()));
     }
 
     private void contentDataRead(DataInputStream dis, Resume resume, SectionType sectionType) throws IOException {
         int sectionSize = dis.readInt();
         List<String> items = new ArrayList<>(sectionSize);
-        collectionCycle(sectionSize, () -> items.add(dis.readUTF()));
+        forEachWithException(sectionSize, () -> items.add(dis.readUTF()));
         resume.addSection(sectionType, new ListSection(items));
     }
 
     private void positionDataRead(DataInputStream dis, List<Organization> organizations, Link homePage) throws IOException {
         int positionsSize = dis.readInt();
         List<Organization.Position> positions = new ArrayList<>(positionsSize);
-        collectionCycle(positionsSize, () -> {
+        forEachWithException(positionsSize, () -> {
             String beginDate = dis.readUTF();
             String endDate = dis.readUTF();
             String title = dis.readUTF();
@@ -126,7 +126,7 @@ public class DataStreamStrategy implements SerializationStrategy {
     private void organizationDataRead(DataInputStream dis, Resume resume, SectionType sectionType) throws IOException {
         int sectionSize = dis.readInt();
         List<Organization> organizations = new ArrayList<>(sectionSize);
-        collectionCycle(sectionSize, () -> {
+        forEachWithException(sectionSize, () -> {
             String linkName = dis.readUTF();
             String linkUrl = dis.readUTF();
             Link homePage = new Link(linkName, (linkUrl.equals("null") ? null : linkUrl));
@@ -137,7 +137,7 @@ public class DataStreamStrategy implements SerializationStrategy {
 
     private void sectionDataRead(DataInputStream dis, Resume resume, String string) throws IOException {
         int sectionSize = dis.readInt();
-        collectionCycle(sectionSize, () -> {
+        forEachWithException(sectionSize, () -> {
             SectionType sectionType = SectionType.valueOf(dis.readUTF());
             switch (sectionType) {
                 case OBJECTIVE, PERSONAL -> resume.addSection(sectionType, new TextSection(dis.readUTF()));
