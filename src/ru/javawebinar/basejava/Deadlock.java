@@ -5,27 +5,20 @@ public class Deadlock {
         Object obj1 = new Object();
         Object obj2 = new Object();
 
-        new Thread(() -> {
-            synchronized (obj1) {
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                synchronized (obj2) {
-                    System.out.println("From obj1 to obj2");
-                }
-            }
-        }).start();
+        new Thread(() -> blockObject(obj1, obj2)).start();
+        new Thread(() -> blockObject(obj2, obj1)).start();
+    }
 
-        synchronized (obj2) {
+    private static void blockObject(Object obj1, Object obj2) {
+        synchronized (obj1) {
+            System.out.println(Thread.currentThread().getName() + " blocked " + obj1.toString());
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            synchronized (obj1) {
-                System.out.println("From obj2 to obj1");
+            System.out.println(Thread.currentThread().getName() + " is waiting to block " + obj2.toString());
+            synchronized (obj2) {
             }
         }
     }
