@@ -15,12 +15,12 @@ public class StreamApiTests {
     }
 
     private static int minValue(int[] values) {
-        return Arrays.stream(values).distinct().sorted().reduce(0, (v1, v2) -> ((v1 * 10) + v2));
+        return Arrays.stream(values).distinct().sorted().reduce(0, (v1, v2) -> v1 * 10 + v2);
     }
 
     private static List<Integer> oddOrEven(List<Integer> integers) {
-        int sum = integers.stream().reduce(0, Integer::sum);
-        return integers.stream().filter((p) -> (isEven(sum) != isEven(p))).collect(Collectors.toList());
+        boolean sumIsEven = isEven(integers.stream().reduce(0, Integer::sum));
+        return integers.stream().filter(p -> sumIsEven != isEven(p)).collect(Collectors.toList());
     }
 
     private static boolean isEven(int number) {
