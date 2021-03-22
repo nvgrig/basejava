@@ -12,15 +12,22 @@ import ru.javawebinar.basejava.model.Resume;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 public abstract class AbstractStorageTest {
     protected final static File STORAGE_DIR = Config.get().getStorageDir();
     protected final Storage storage;
 
-    protected static final Resume RESUME_1 = ResumeTestData.getTestResume("uuid1", "Ricky Bobby");
-    protected static final Resume RESUME_2 = ResumeTestData.getTestResume("uuid2", "Sam Smith");
-    protected static final Resume RESUME_3 = ResumeTestData.getTestResume("uuid3", "Lance Dance");
-    protected static final Resume RESUME_4 = ResumeTestData.getTestResume("uuid4", "Mickey Mouse");
+    protected static final String UUID_1 = UUID.randomUUID().toString();
+    protected static final String UUID_2 = UUID.randomUUID().toString();
+    protected static final String UUID_3 = UUID.randomUUID().toString();
+    protected static final String UUID_4 = UUID.randomUUID().toString();
+
+
+    protected static final Resume RESUME_1 = ResumeTestData.getTestResume(UUID_1, "Ricky Bobby");
+    protected static final Resume RESUME_2 = ResumeTestData.getTestResume(UUID_2, "Sam Smith");
+    protected static final Resume RESUME_3 = ResumeTestData.getTestResume(UUID_3, "Lance Dance");
+    protected static final Resume RESUME_4 = ResumeTestData.getTestResume(UUID_4, "Mickey Mouse");
 
     public AbstractStorageTest(Storage storage) {
         this.storage = storage;
@@ -47,9 +54,9 @@ public abstract class AbstractStorageTest {
 
     @Test
     public void update() {
-        Resume newResume = new Resume("uuid1", "New Name");
+        Resume newResume = new Resume(UUID_1, "New Name");
         storage.update(newResume);
-        Assert.assertTrue(newResume.equals(storage.get("uuid1")));
+        Assert.assertTrue(newResume.equals(storage.get(UUID_1)));
     }
 
     @Test(expected = NotExistStorageException.class)
