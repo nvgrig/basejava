@@ -18,7 +18,7 @@ public class SqlHelper{
     public <T> T executeSqlQuery(String sqlStatement, QueryProcess<T> queryProcess) {
         try (Connection connection = connectionFactory.getConnection();
              PreparedStatement ps = connection.prepareStatement(sqlStatement)) {
-            return queryProcess.execute(connection, ps);
+            return queryProcess.execute(ps);
         } catch (SQLException e) {
             if (e.getSQLState().equals("23505")) {
                 throw new ExistStorageException("");
@@ -28,6 +28,6 @@ public class SqlHelper{
     }
 
     public interface QueryProcess <T>{
-        T execute(Connection connection, PreparedStatement ps) throws SQLException;
+        T execute(PreparedStatement ps) throws SQLException;
     }
 }
