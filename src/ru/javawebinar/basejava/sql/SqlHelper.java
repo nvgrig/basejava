@@ -8,7 +8,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public class SqlHelper{
+public class SqlHelper {
     public final ConnectionFactory connectionFactory;
 
     public SqlHelper(String dbUrl, String dbUser, String dbPassword) {
@@ -27,7 +27,32 @@ public class SqlHelper{
         }
     }
 
-    public interface QueryProcess <T>{
+    public <T> T transactionalExecuteSqlQuery(TransactionProcess<T> transactionProcess) {
+        try (Connection connection = connectionFactory.getConnection()) {
+            try {
+                connection.setAutoCommit(false);
+                T result = transactionProcess.execute(connection);
+                connection.commit();
+                return result;
+            } catch (SQLException e) {
+                connection.rollback();
+                if (e.getSQLState().equals("23505")) {
+                    throw new ExistStorageException("");
+                }
+            }
+        } catch (SQLException e) {
+            throw new StorageException(e);
+        }
+        return null;
+    }
+
+    public interface QueryProcess<T> {
         T execute(PreparedStatement ps) throws SQLException;
     }
+
+    public interface TransactionProcess<T> {
+        T execute(Connection connection) throws SQLException;
+    }
+
+
 }
