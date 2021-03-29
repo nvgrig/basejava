@@ -26,20 +26,24 @@ public class SqlStorage implements Storage {
 
     @Override
     public void update(Resume resume) {
+        String uuid = resume.getUuid();
         sqlHelper.transactionalExecuteSqlQuery(connection -> {
             try (PreparedStatement ps = connection.prepareStatement("UPDATE resume SET full_name =? WHERE uuid=?")) {
                 ps.setString(1, resume.getFullName());
-                String uuid = resume.getUuid();
-                ps.setString(2, resume.getUuid());
+                ps.setString(2, uuid);
                 if (ps.executeUpdate() == 0) {
                     throw new NotExistStorageException(uuid);
                 }
             }
-            try (PreparedStatement ps = connection.prepareStatement("UPDATE contact SET type = ?, value = ? WHERE resume_uuid = ?")) {
+            try (PreparedStatement ps = connection.prepareStatement("DELETE FROM contact WHERE resume_uuid=?")) {
+                ps.setString(1, uuid);
+                ps.execute();
+            }
+            try (PreparedStatement ps = connection.prepareStatement("INSERT INTO contact (resume_uuid, type, value)  VALUES (?,?,?)")) {
                 for (Map.Entry<ContactType, String> contacts : resume.getContacts().entrySet()) {
-                    ps.setString(1, contacts.getKey().name());
-                    ps.setString(2, contacts.getValue());
-                    ps.setString(3, resume.getUuid());
+                    ps.setString(1, uuid);
+                    ps.setString(2, contacts.getKey().name());
+                    ps.setString(3, contacts.getValue());
                     ps.addBatch();
                 }
                 ps.executeBatch();
@@ -72,10 +76,10 @@ public class SqlStorage implements Storage {
     @Override
     public Resume get(String uuid) {
         return sqlHelper.executeSqlQuery("" +
-                        " SELECT * FROM resume r " +
-                        "   JOIN contact c " +
-                        "     ON r.uuid = c.resume_uuid " +
-                        "  WHERE r.uuid =?",
+                        "    SELECT * FROM resume r " +
+                        " LEFT JOIN contact c " +
+                        "        ON r.uuid = c.resume_uuid " +
+                        "     WHERE r.uuid =?",
                 (ps) -> {
                     ps.setString(1, uuid);
                     ResultSet rs = ps.executeQuery();
@@ -85,6 +89,9 @@ public class SqlStorage implements Storage {
                     Resume resume = new Resume(uuid, rs.getString("full_name"));
                     do {
                         String value = rs.getString("value");
+                        if (value == null) {
+                            break;
+                        }
                         ContactType type = ContactType.valueOf(rs.getString("type"));
                         resume.addContact(type, value);
                     } while (rs.next());
