@@ -39,15 +39,7 @@ public class SqlStorage implements Storage {
                 ps.setString(1, uuid);
                 ps.execute();
             }
-            try (PreparedStatement ps = connection.prepareStatement("INSERT INTO contact (resume_uuid, type, value)  VALUES (?,?,?)")) {
-                for (Map.Entry<ContactType, String> contacts : resume.getContacts().entrySet()) {
-                    ps.setString(1, uuid);
-                    ps.setString(2, contacts.getKey().name());
-                    ps.setString(3, contacts.getValue());
-                    ps.addBatch();
-                }
-                ps.executeBatch();
-            }
+            sqlHelper.insertContact(resume, connection);
             return null;
         });
     }
@@ -60,15 +52,7 @@ public class SqlStorage implements Storage {
                 ps.setString(2, resume.getFullName());
                 ps.execute();
             }
-            try (PreparedStatement ps = connection.prepareStatement("INSERT INTO contact (resume_uuid, type, value) VALUES (?,?,?)")) {
-                for (Map.Entry<ContactType, String> contacts : resume.getContacts().entrySet()) {
-                    ps.setString(1, resume.getUuid());
-                    ps.setString(2, contacts.getKey().name());
-                    ps.setString(3, contacts.getValue());
-                    ps.addBatch();
-                }
-                ps.executeBatch();
-            }
+            sqlHelper.insertContact(resume, connection);
             return null;
         });
     }
@@ -140,6 +124,5 @@ public class SqlStorage implements Storage {
             rs.next();
             return rs.getInt(1);
         });
-
     }
 }

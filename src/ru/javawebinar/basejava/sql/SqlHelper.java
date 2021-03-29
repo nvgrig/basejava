@@ -2,11 +2,14 @@ package ru.javawebinar.basejava.sql;
 
 import ru.javawebinar.basejava.exception.ExistStorageException;
 import ru.javawebinar.basejava.exception.StorageException;
+import ru.javawebinar.basejava.model.ContactType;
+import ru.javawebinar.basejava.model.Resume;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.Map;
 
 public class SqlHelper {
     public final ConnectionFactory connectionFactory;
@@ -52,6 +55,18 @@ public class SqlHelper {
 
     public interface TransactionProcess<T> {
         T execute(Connection connection) throws SQLException;
+    }
+
+    public void insertContact(Resume resume, Connection connection) throws SQLException {
+        try (PreparedStatement ps = connection.prepareStatement("INSERT INTO contact (resume_uuid, type, value)  VALUES (?,?,?)")) {
+            for (Map.Entry<ContactType, String> contacts : resume.getContacts().entrySet()) {
+                ps.setString(1, resume.getUuid());
+                ps.setString(2, contacts.getKey().name());
+                ps.setString(3, contacts.getValue());
+                ps.addBatch();
+            }
+            ps.executeBatch();
+        }
     }
 
 
