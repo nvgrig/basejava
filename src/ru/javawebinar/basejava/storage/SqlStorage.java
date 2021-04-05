@@ -8,7 +8,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 public class SqlStorage implements Storage {
     public final SqlHelper sqlHelper;
@@ -154,9 +157,19 @@ public class SqlStorage implements Storage {
             try (PreparedStatement ps = connection.prepareStatement("INSERT INTO section (resume_uuid, sect_type, sect_value) VALUES (?,?,?)")) {
                 for (Map.Entry<SectionType, AbstractSection> sections : resume.getSections().entrySet()) {
                     ps.setString(1, resume.getUuid());
-                    ps.setString(2, sections.getKey().name());
-                    ps.setString(3, sections.getValue().toString());
-                    ps.addBatch();
+                    SectionType sectionType = sections.getKey();
+                    ps.setString(2, sectionType.name());
+                    switch (sectionType) {
+                        case OBJECTIVE, PERSONAL -> {
+                            ps.setString(3, sections.getValue().toString());
+                            ps.addBatch();
+                        }
+                        case ACHIEVEMENT, QUALIFICATIONS -> {
+                            String value = String.join("/n", ((ListSection) sections.getValue()).getItems());
+                            ps.setString(3, value);
+                            ps.addBatch();
+                        }
+                    }
                 }
                 ps.executeBatch();
             }
@@ -174,8 +187,11 @@ public class SqlStorage implements Storage {
     private void addSection(Resume resume, ResultSet rs) throws SQLException {
         String value = rs.getString("sect_value");
         if (value != null) {
-            String type = rs.getString("sect_type");
-            resume.addSection(SectionType.valueOf(type), new TextSection(value));
+            SectionType sectionType = SectionType.valueOf(rs.getString("sect_type"));
+            switch (sectionType) {
+                case OBJECTIVE, PERSONAL -> resume.addSection(sectionType, new TextSection(value));
+                case ACHIEVEMENT, QUALIFICATIONS -> resume.addSection(sectionType, new ListSection(value.split("/n")));
+            }
         }
     }
 }
