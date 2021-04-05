@@ -2,6 +2,8 @@ package ru.javawebinar.basejava;
 
 import ru.javawebinar.basejava.model.ContactType;
 import ru.javawebinar.basejava.model.Resume;
+import ru.javawebinar.basejava.model.SectionType;
+import ru.javawebinar.basejava.model.TextSection;
 
 public class ResumeTestData {
     public static Resume getTestResume(String uuid, String fullName) {
@@ -10,9 +12,9 @@ public class ResumeTestData {
         resume.addContact(ContactType.SKYPE, "grigory.kislin");
         resume.addContact(ContactType.MAIL, "gkislin@yandex.ru");
         resume.addContact(ContactType.WEBPAGE, "http://gkislin.ru/");
-        /*resume.addSection(SectionType.OBJECTIVE, new TextSection("Objective1"));
+        resume.addSection(SectionType.OBJECTIVE, new TextSection("Objective1"));
         resume.addSection(SectionType.PERSONAL, new TextSection("Personal data"));
-        resume.addSection(SectionType.ACHIEVEMENT, new ListSection("Achievement11", "Achievement12", "Achievement13"));
+        /*resume.addSection(SectionType.ACHIEVEMENT, new ListSection("Achievement11", "Achievement12", "Achievement13"));
         resume.addSection(SectionType.QUALIFICATIONS, new ListSection("Java", "SQL", "JavaScript"));
         resume.addSection(SectionType.EXPERIENCE,
                 new OrganizationSection(
