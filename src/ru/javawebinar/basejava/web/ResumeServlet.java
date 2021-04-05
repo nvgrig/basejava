@@ -1,5 +1,8 @@
 package ru.javawebinar.basejava.web;
 
+import ru.javawebinar.basejava.Config;
+import ru.javawebinar.basejava.storage.SqlStorage;
+
 import javax.servlet.*;
 import javax.servlet.http.*;
 import java.io.IOException;
@@ -10,8 +13,9 @@ public class ResumeServlet extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         response.setCharacterEncoding("UTF-8");
         response.setContentType("text/html; charset=UTF-8");
-        String name = request.getParameter("name");
-        response.getWriter().write(name == null ? "Hello resumes!" : "Hello " + name);
+        String uuid = request.getParameter("uuid");
+        SqlStorage sqlStorage = Config.get().getSqlStorage();
+        response.getWriter().println(sqlStorage.get(uuid).getUuid());
     }
 
     @Override
