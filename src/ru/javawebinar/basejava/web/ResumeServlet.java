@@ -1,5 +1,6 @@
 package ru.javawebinar.basejava.web;
 
+import ru.javawebinar.basejava.Config;
 import ru.javawebinar.basejava.model.Resume;
 import ru.javawebinar.basejava.storage.SqlStorage;
 
@@ -12,15 +13,12 @@ import java.io.IOException;
 import java.util.List;
 
 public class ResumeServlet extends HttpServlet {
+    private SqlStorage sqlStorage;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
-        try {
-            Class.forName("org.postgresql.Driver");
-        } catch (ClassNotFoundException e) {
-            throw new IllegalStateException("No driver found for PostgreSQL database", e);
-        }
+        sqlStorage = Config.get().getSqlStorage();
     }
 
     @Override
@@ -29,7 +27,6 @@ public class ResumeServlet extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
         response.setContentType("text/html; charset=UTF-8");
         String uuid = request.getParameter("uuid");
-        SqlStorage sqlStorage = new SqlStorage("jdbc:postgresql://localhost:5432/resumes", "postgres", "postgres");
         if (uuid == null) {
             List<Resume> resumes = sqlStorage.getAllSorted();
             printTableHeader(response);
