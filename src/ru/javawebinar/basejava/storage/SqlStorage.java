@@ -3,6 +3,7 @@ package ru.javawebinar.basejava.storage;
 import ru.javawebinar.basejava.exception.NotExistStorageException;
 import ru.javawebinar.basejava.model.*;
 import ru.javawebinar.basejava.sql.SqlHelper;
+import ru.javawebinar.basejava.util.JsonParser;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -168,17 +169,9 @@ public class SqlStorage implements Storage {
             try (PreparedStatement ps = connection.prepareStatement("INSERT INTO section (resume_uuid, type, value) VALUES (?,?,?)")) {
                 for (Map.Entry<SectionType, AbstractSection> sections : resume.getSections().entrySet()) {
                     ps.setString(1, resume.getUuid());
-                    SectionType sectionType = sections.getKey();
-                    ps.setString(2, sectionType.name());
-                    String value = null;
-                    switch (sectionType) {
-                        case OBJECTIVE, PERSONAL -> {
-                            TextSection textSection = (TextSection) sections.getValue();
-                            value = textSection.getContent();
-                        }
-                        case ACHIEVEMENT, QUALIFICATIONS -> value = String.join("/n", ((ListSection) sections.getValue()).getItems());
-                    }
-                    ps.setString(3, value);
+                    ps.setString(2, sections.getKey().name());
+                    AbstractSection section = sections.getValue();
+                    ps.setString(3, JsonParser.write(section, AbstractSection.class));
                     ps.addBatch();
                 }
                 ps.executeBatch();
@@ -198,10 +191,7 @@ public class SqlStorage implements Storage {
         String value = rs.getString("value");
         if (value != null) {
             SectionType sectionType = SectionType.valueOf(rs.getString("type"));
-            switch (sectionType) {
-                case OBJECTIVE, PERSONAL -> resume.addSection(sectionType, new TextSection(value));
-                case ACHIEVEMENT, QUALIFICATIONS -> resume.addSection(sectionType, new ListSection(value.split("/n")));
-            }
+            resume.addSection(sectionType, JsonParser.read(value, AbstractSection.class));
         }
     }
 }
