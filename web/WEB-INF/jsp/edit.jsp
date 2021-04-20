@@ -1,4 +1,7 @@
 <%@ page import="ru.javawebinar.basejava.model.ContactType" %>
+<%@ page import="ru.javawebinar.basejava.model.SectionType" %>
+<%@ page import="ru.javawebinar.basejava.model.ListSection" %>
+<%@ page import="ru.javawebinar.basejava.model.TextSection" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html>
@@ -24,10 +27,26 @@
                 <dd><input type="text" name="${type.name()}" size=30 value="${resume.getContact(type)}"></dd>
             </dl>
         </c:forEach>
-        <h3>Секции:</h3>
-        <input type="text" name="section" size=30 value="1"><br/>
-        <input type="text" name="section" size=30 value="2"><br/>
-        <input type="text" name="section" size=30 value="3"><br/>
+        <c:forEach var="sectionEntry" items="${resume.sections}">
+            <jsp:useBean id="sectionEntry"
+                         type="java.util.Map.Entry<ru.javawebinar.basejava.model.SectionType, ru.javawebinar.basejava.model.AbstractSection>"/>
+            <c:set var="type" value="${sectionEntry.key}"/>
+            <c:set var="content" value="${sectionEntry.value}"/>
+            <jsp:useBean id="content" type="ru.javawebinar.basejava.model.AbstractSection"/>
+            <h3>${type.title}</h3>
+            <c:choose>
+                <c:when test="${type == 'PERSONAL' or type == 'OBJECTIVE'}">
+                    <dl><input type="text" name="${type.name()}" size=30 value="<%=((TextSection) content).getContent()%>"></dl>
+                </c:when>
+                <c:when test="${type == 'ACHIEVEMENT' or type == 'QUALIFICATIONS'}">
+                        <c:forEach var="listItem" items="<%=((ListSection) content).getItems()%>">
+                            <jsp:useBean id="listItem"
+                                         type="java.lang.String"/>
+                            <dl><input type="text" name="${type.name()}" size=30 value="<%=listItem%>"></dl>
+                        </c:forEach>
+                </c:when>
+            </c:choose>
+        </c:forEach>
         <hr>
         <button type="submit">Сохранить</button>
         <button onclick="window.history.back()">Отменить</button>

@@ -2,8 +2,7 @@ package ru.javawebinar.basejava.web;
 
 import ru.javawebinar.basejava.Config;
 import ru.javawebinar.basejava.exception.NotExistStorageException;
-import ru.javawebinar.basejava.model.ContactType;
-import ru.javawebinar.basejava.model.Resume;
+import ru.javawebinar.basejava.model.*;
 import ru.javawebinar.basejava.storage.Storage;
 
 import javax.servlet.ServletConfig;
@@ -27,25 +26,39 @@ public class ResumeServlet extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         String uuid = request.getParameter("uuid");
         String fullName = request.getParameter("fullName");
-        Boolean isResumeNew = false;
-        Resume r;
+        boolean isResumeNew = false;
+        Resume resume;
         try {
-            r = storage.get(uuid);
+            resume = storage.get(uuid);
         } catch (NotExistStorageException e) {
             isResumeNew = true;
-            r = new Resume(uuid, fullName);
+            resume = new Resume(uuid, fullName);
         }
-        r.setFullName(fullName);
+        resume.setFullName(fullName);
         for (ContactType type : ContactType.values()) {
             String value = request.getParameter(type.name());
             if (value != null && value.trim().length() != 0) {
-                r.addContact(type, value);
+                resume.addContact(type, value);
             } else {
-                r.getContacts().remove(type);
+                resume.getContacts().remove(type);
             }
         }
-        if (isResumeNew) storage.save(r);
-        else storage.update(r);
+        for (SectionType type : SectionType.values()) {
+            String value = request.getParameter(type.name());
+            if (value != null && value.trim().length() != 0) {
+                switch (type) {
+                    case PERSONAL, OBJECTIVE -> resume.addSection(type, new TextSection(value));
+                    case ACHIEVEMENT, QUALIFICATIONS -> {
+                        String [] values = request.getParameterValues(type.name());
+                        resume.addSection(type, new ListSection(values));
+                    }
+                }
+            } else {
+                resume.getContacts().remove(type);
+            }
+        }
+        if (isResumeNew) storage.save(resume);
+        else storage.update(resume);
         response.sendRedirect("resume");
     }
 
