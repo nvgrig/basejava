@@ -39,11 +39,12 @@
                     <dl><input type="text" name="${type.name()}" size=30 value="<%=((TextSection) content).getContent()%>"></dl>
                 </c:when>
                 <c:when test="${type == 'ACHIEVEMENT' or type == 'QUALIFICATIONS'}">
+                    <textarea name="${type.name()}" rows=5 cols=30>
                         <c:forEach var="listItem" items="<%=((ListSection) content).getItems()%>">
-                            <jsp:useBean id="listItem"
-                                         type="java.lang.String"/>
-                            <dl><input type="text" name="${type.name()}" size=30 value="<%=listItem%>"></dl>
+                            <jsp:useBean id="listItem" type="java.lang.String"/>
+                           <%=listItem%>
                         </c:forEach>
+                    </textarea>
                 </c:when>
             </c:choose>
         </c:forEach>
