@@ -35,8 +35,7 @@
                 </c:when>
                 <c:when test="${type == 'ACHIEVEMENT' or type == 'QUALIFICATIONS'}">
                     <c:forEach var="listItem" items="<%=((ListSection) content).getItems()%>">
-                        <jsp:useBean id="listItem"
-                             type="java.lang.String"/>
+                        <jsp:useBean id="listItem" type="java.lang.String"/>
                         <%=listItem%><br/>
                     </c:forEach>
                 </c:when>

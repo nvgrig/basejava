@@ -29,15 +29,14 @@
             </dl>
         </c:forEach>
         <c:forEach var="type" items="<%=SectionType.values()%>">
-            <h3>${type.title}</h3>
             <c:choose>
                 <c:when test="${type.name() == 'PERSONAL' or type.name() == 'OBJECTIVE'}">
+                    <h3>${type.title}</h3>
                     <dl><input type="text" name="${type.name()}" size=30 value=""></dl>
                 </c:when>
                 <c:when test="${type.name() == 'ACHIEVEMENT' or type.name() == 'QUALIFICATIONS'}">
-                    <dl><input type="text" name="${type.name()}" size=30 value=""></dl>
-                    <dl><input type="text" name="${type.name()}" size=30 value=""></dl>
-                    <dl><input type="text" name="${type.name()}" size=30 value=""></dl>
+                    <h3>${type.title}</h3>
+                    <textarea name='${type.name()}' cols=35 rows=5></textarea>
                 </c:when>
             </c:choose>
         </c:forEach>

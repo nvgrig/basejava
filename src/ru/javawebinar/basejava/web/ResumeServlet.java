@@ -49,8 +49,7 @@ public class ResumeServlet extends HttpServlet {
                 switch (type) {
                     case PERSONAL, OBJECTIVE -> resume.addSection(type, new TextSection(value));
                     case ACHIEVEMENT, QUALIFICATIONS -> {
-                        String [] values = request.getParameterValues(type.name());
-                        resume.addSection(type, new ListSection(values));
+                        resume.addSection(type, new ListSection(value.split("\n")));
                     }
                 }
             } else {
