@@ -27,21 +27,31 @@
                 <dd><input type="text" name="${type.name()}" size=30 value="${resume.getContact(type)}"></dd>
             </dl>
         </c:forEach>
-        <c:forEach var="sectionEntry" items="${resume.sections}">
-            <jsp:useBean id="sectionEntry"
-                         type="java.util.Map.Entry<ru.javawebinar.basejava.model.SectionType, ru.javawebinar.basejava.model.AbstractSection>"/>
-            <c:set var="type" value="${sectionEntry.key}"/>
-            <c:set var="content" value="${sectionEntry.value}"/>
-            <jsp:useBean id="content" type="ru.javawebinar.basejava.model.AbstractSection"/>
-            <h3>${type.title}</h3>
-            <c:choose>
-                <c:when test="${type == 'PERSONAL' or type == 'OBJECTIVE'}">
-                    <dl><input type="text" name="${type.name()}" size=30 value="<%=((TextSection) content).getContent()%>"></dl>
-                </c:when>
-                <c:when test="${type == 'ACHIEVEMENT' or type == 'QUALIFICATIONS'}">
-                    <textarea name='${type.name()}' cols=35 rows=5><%=String.join("\n", ((ListSection) content).getItems())%></textarea>
-                </c:when>
-            </c:choose>
+        <c:forEach var="type" items="<%=SectionType.values()%>">
+            <c:set var="section" value="${resume.getSection(type)}"/>
+            <c:if test="${section != null}">
+                <jsp:useBean id="section" type="ru.javawebinar.basejava.model.AbstractSection"/>
+                <c:choose>
+                    <c:when test="${type == 'PERSONAL' or type == 'OBJECTIVE'}">
+                        <h3>${type.title}</h3>
+                        <dl><input type="text" name="${type.name()}" size=30
+                                   value="<%=((TextSection) section).getContent()%>"></dl>
+                    </c:when>
+                    <c:when test="${type == 'ACHIEVEMENT' or type == 'QUALIFICATIONS'}">
+                        <h3>${type.title}</h3>
+                        <textarea name='${type.name()}' cols=35
+                                  rows=5><%=String.join("\n", ((ListSection) section).getItems())%></textarea>
+                    </c:when>
+                </c:choose>
+            </c:if>
+            <c:if test="${section == null}">
+                <c:choose>
+                    <c:when test="${type == 'ACHIEVEMENT' or type == 'QUALIFICATIONS'}">
+                        <h3>${type.title}</h3>
+                        <textarea name='${type.name()}' cols=35 rows=5></textarea>
+                    </c:when>
+                </c:choose>
+            </c:if>
         </c:forEach>
         <hr>
         <button type="submit">Сохранить</button>
