@@ -11,6 +11,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 public class ResumeServlet extends HttpServlet {
 
@@ -49,7 +51,7 @@ public class ResumeServlet extends HttpServlet {
                 switch (type) {
                     case PERSONAL, OBJECTIVE -> resume.addSection(type, new TextSection(value));
                     case ACHIEVEMENT, QUALIFICATIONS -> {
-                        resume.addSection(type, new ListSection(value.split("\n")));
+                        resume.addSection(type, new ListSection(Arrays.stream(value.split("\n")).filter(x -> !x.equals("\r")).filter(x -> !x.matches("\\s+")).collect(Collectors.toList())));
                     }
                 }
             } else {
