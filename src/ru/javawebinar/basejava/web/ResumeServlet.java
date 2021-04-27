@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class ResumeServlet extends HttpServlet {
@@ -82,7 +83,8 @@ public class ResumeServlet extends HttpServlet {
                 r = storage.get(uuid);
                 break;
             case "add":
-                request.getRequestDispatcher("/WEB-INF/jsp/add.jsp").forward(request, response);
+                r = new Resume(UUID.randomUUID().toString(),"");
+                break;
             default:
                 throw new IllegalArgumentException("Action " + action + " is illegal");
         }
