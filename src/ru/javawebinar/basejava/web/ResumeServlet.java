@@ -52,7 +52,7 @@ public class ResumeServlet extends HttpServlet {
                 switch (type) {
                     case PERSONAL, OBJECTIVE -> resume.addSection(type, new TextSection(value));
                     case ACHIEVEMENT, QUALIFICATIONS -> {
-                        resume.addSection(type, new ListSection(Arrays.stream(value.split("\n")).filter(x -> !(x.equals("\r") && x.matches("\\s+"))).collect(Collectors.toList())));
+                        resume.addSection(type, new ListSection(Arrays.stream(value.split("\n")).filter(x -> !(x.equals("\r") || x.matches("\\s+"))).collect(Collectors.toList())));
                     }
                 }
             } else {
