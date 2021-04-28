@@ -46,6 +46,10 @@
             </c:if>
             <c:if test="${section == null}">
                 <c:choose>
+                    <c:when test="${type == 'PERSONAL' or type == 'OBJECTIVE'}">
+                        <h3>${type.title}</h3>
+                        <dl><input type="text" name="${type.name()}" size=30 value=""></dl>
+                    </c:when>
                     <c:when test="${type == 'ACHIEVEMENT' or type == 'QUALIFICATIONS'}">
                         <h3>${type.title}</h3>
                         <textarea name='${type.name()}' cols=35 rows=5></textarea>
@@ -55,7 +59,7 @@
         </c:forEach>
         <hr>
         <button type="submit">Сохранить</button>
-        <button onclick="window.history.back()">Отменить</button>
+        <button type="reset" onclick="window.history.back()">Отменить</button>
     </form>
 </section>
 <jsp:include page="fragments/footer.jsp"/>
