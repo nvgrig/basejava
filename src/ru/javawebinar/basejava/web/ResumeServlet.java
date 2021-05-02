@@ -29,38 +29,40 @@ public class ResumeServlet extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         String uuid = request.getParameter("uuid");
         String fullName = request.getParameter("fullName");
-        boolean isResumeNew = false;
-        Resume resume;
-        try {
-            resume = storage.get(uuid);
-        } catch (NotExistStorageException e) {
-            isResumeNew = true;
-            resume = new Resume(uuid, fullName);
-        }
-        resume.setFullName(fullName);
-        for (ContactType type : ContactType.values()) {
-            String value = request.getParameter(type.name());
-            if (value != null && value.trim().length() != 0) {
-                resume.addContact(type, value);
-            } else {
-                resume.getContacts().remove(type);
+        if (fullName.trim().replaceAll("\\s+", " ").matches("([A-za-zА-Яа-яЁё]+)|([A-za-zА-Яа-яЁё]+\\s)+([A-za-zА-Яа-яЁё]+)")) {
+            boolean isResumeNew = false;
+            Resume resume;
+            try {
+                resume = storage.get(uuid);
+            } catch (NotExistStorageException e) {
+                isResumeNew = true;
+                resume = new Resume(uuid, fullName);
             }
-        }
-        for (SectionType type : SectionType.values()) {
-            String value = request.getParameter(type.name());
-            if (value != null && value.trim().length() != 0) {
-                switch (type) {
-                    case PERSONAL, OBJECTIVE -> resume.addSection(type, new TextSection(value));
-                    case ACHIEVEMENT, QUALIFICATIONS -> {
-                        resume.addSection(type, new ListSection(Arrays.stream(value.split("\n")).filter(x -> !(x.equals("\r") || x.matches("\\s+"))).collect(Collectors.toList())));
-                    }
+            resume.setFullName(fullName);
+            for (ContactType type : ContactType.values()) {
+                String value = request.getParameter(type.name());
+                if (value != null && value.trim().length() != 0) {
+                    resume.addContact(type, value);
+                } else {
+                    resume.getContacts().remove(type);
                 }
-            } else {
-                resume.getSections().remove(type);
             }
+            for (SectionType type : SectionType.values()) {
+                String value = request.getParameter(type.name());
+                if (value != null && value.trim().length() != 0) {
+                    switch (type) {
+                        case PERSONAL, OBJECTIVE -> resume.addSection(type, new TextSection(value));
+                        case ACHIEVEMENT, QUALIFICATIONS -> {
+                            resume.addSection(type, new ListSection(Arrays.stream(value.split("\n")).filter(x -> !(x.equals("\r")) && !(x.matches("\\s+"))).collect(Collectors.toList())));
+                        }
+                    }
+                } else {
+                    resume.getSections().remove(type);
+                }
+            }
+            if (isResumeNew) storage.save(resume);
+            else storage.update(resume);
         }
-        if (isResumeNew) storage.save(resume);
-        else storage.update(resume);
         response.sendRedirect("resume");
     }
 
