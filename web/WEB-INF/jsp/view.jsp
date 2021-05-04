@@ -1,5 +1,8 @@
 <%@ page import="ru.javawebinar.basejava.model.ListSection" %>
 <%@ page import="ru.javawebinar.basejava.model.TextSection" %>
+<%@ page import="ru.javawebinar.basejava.model.OrganizationSection" %>
+<%@ page import="ru.javawebinar.basejava.util.DateUtil" %>
+<%@ page import="ru.javawebinar.basejava.util.HtmlView" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html>
@@ -37,6 +40,21 @@
                     <c:forEach var="listItem" items="<%=((ListSection) content).getItems()%>">
                         <jsp:useBean id="listItem" type="java.lang.String"/>
                         <%=listItem%><br/>
+                    </c:forEach>
+                </c:when>
+                <c:when test="${type == 'EXPERIENCE' or type == 'EDUCATION'}">
+                    <c:forEach var="orgItem" items="<%=((OrganizationSection) content).getOrganizations()%>">
+                        <jsp:useBean id="orgItem" type="ru.javawebinar.basejava.model.Organization"/>
+                        <tr>
+                            <td><h3><%=orgItem.getHomePage().getName() + " " + HtmlView.formatBrackets(orgItem.getHomePage().getUrl())%></h3></td>
+                        </tr>
+                        <c:forEach var="position" items="${orgItem.positions}">
+                            <jsp:useBean id="position" type="ru.javawebinar.basejava.model.Organization.Position"/>
+                            <tr>
+                                <td><%=DateUtil.format(position.getBeginDate()) + " - " + DateUtil.format(position.getFinishDate()) + ": "%></td>
+                                <td><%=position.getTitle() + " " + HtmlView.formatBrackets(position.getDescription())%></td><br>
+                            </tr>
+                        </c:forEach>
                     </c:forEach>
                 </c:when>
             </c:choose>
