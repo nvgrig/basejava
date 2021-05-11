@@ -31,34 +31,41 @@
             <c:set var="type" value="${sectionEntry.key}"/>
             <c:set var="content" value="${sectionEntry.value}"/>
             <jsp:useBean id="content" type="ru.javawebinar.basejava.model.AbstractSection"/>
-            <h3>${type.title}</h3>
-            <c:choose>
-                <c:when test="${type == 'PERSONAL' or type == 'OBJECTIVE'}">
-                    <%=((TextSection) content).getContent()%><br/>
-                </c:when>
-                <c:when test="${type == 'ACHIEVEMENT' or type == 'QUALIFICATIONS'}">
-                    <c:forEach var="listItem" items="<%=((ListSection) content).getItems()%>">
-                        <jsp:useBean id="listItem" type="java.lang.String"/>
-                        <%=listItem%><br/>
-                    </c:forEach>
-                </c:when>
-                <c:when test="${type == 'EXPERIENCE' or type == 'EDUCATION'}">
-                    <c:forEach var="orgItem" items="<%=((OrganizationSection) content).getOrganizations()%>">
-                        <jsp:useBean id="orgItem" type="ru.javawebinar.basejava.model.Organization"/>
+    <h3>${type.title}</h3>
+    <c:choose>
+        <c:when test="${type == 'PERSONAL' or type == 'OBJECTIVE'}">
+            <%=((TextSection) content).getContent()%><br/>
+        </c:when>
+        <c:when test="${type == 'ACHIEVEMENT' or type == 'QUALIFICATIONS'}">
+            <c:forEach var="listItem" items="<%=((ListSection) content).getItems()%>">
+                <jsp:useBean id="listItem" type="java.lang.String"/>
+                <%=listItem%><br/>
+            </c:forEach>
+        </c:when>
+        <c:when test="${type == 'EXPERIENCE' or type == 'EDUCATION'}">
+            <c:forEach var="orgItem" items="<%=((OrganizationSection) content).getOrganizations()%>">
+                <jsp:useBean id="orgItem" type="ru.javawebinar.basejava.model.Organization"/>
+                <tr>
+                    <td>
+                        <h3><%=orgItem.getHomePage().getName() + " " + HtmlView.formatBrackets(orgItem.getHomePage().getUrl())%>
+                        </h3></td>
+                </tr>
+                <div style="margin-left: 30px">
+                    <c:forEach var="position" items="${orgItem.positions}">
+                        <jsp:useBean id="position" type="ru.javawebinar.basejava.model.Organization.Position"/>
                         <tr>
-                            <td><h3><%=orgItem.getHomePage().getName() + " " + HtmlView.formatBrackets(orgItem.getHomePage().getUrl())%></h3></td>
+                            <td><%=DateUtil.format(position.getBeginDate()) + " - " + DateUtil.format(position.getFinishDate()) + ": "%>
+                            </td>
+                            <td><%=position.getTitle() + " " + HtmlView.formatBrackets(position.getDescription())%>
+                            </td>
+                            <br>
                         </tr>
-                        <c:forEach var="position" items="${orgItem.positions}">
-                            <jsp:useBean id="position" type="ru.javawebinar.basejava.model.Organization.Position"/>
-                            <tr>
-                                <td><%=DateUtil.format(position.getBeginDate()) + " - " + DateUtil.format(position.getFinishDate()) + ": "%></td>
-                                <td><%=position.getTitle() + " " + HtmlView.formatBrackets(position.getDescription())%></td><br>
-                            </tr>
-                        </c:forEach>
                     </c:forEach>
-                </c:when>
-            </c:choose>
-        </c:forEach>
+                </div>
+            </c:forEach>
+        </c:when>
+    </c:choose>
+    </c:forEach>
     <p>
         <button onclick="window.history.back()">Назад</button>
 </section>

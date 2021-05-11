@@ -4,6 +4,8 @@ import ru.javawebinar.basejava.Config;
 import ru.javawebinar.basejava.exception.NotExistStorageException;
 import ru.javawebinar.basejava.model.*;
 import ru.javawebinar.basejava.storage.Storage;
+import ru.javawebinar.basejava.util.DateUtil;
+import ru.javawebinar.basejava.util.HtmlView;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -11,7 +13,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -49,15 +53,36 @@ public class ResumeServlet extends HttpServlet {
             }
             for (SectionType type : SectionType.values()) {
                 String value = request.getParameter(type.name());
-                if (value != null && value.trim().length() != 0) {
+                String[] orgs = request.getParameterValues(type.name() + "org");
+                if (HtmlView.isEmpty(value) && HtmlView.isEmpty(orgs)) {
+                    resume.getSections().remove(type);
+                } else {
                     switch (type) {
                         case PERSONAL, OBJECTIVE -> resume.addSection(type, new TextSection(value));
                         case ACHIEVEMENT, QUALIFICATIONS -> {
                             resume.addSection(type, new ListSection(Arrays.stream(value.split("\n")).filter(x -> !(x.equals("\r")) && !(x.matches("\\s+"))).collect(Collectors.toList())));
                         }
+                        case EXPERIENCE, EDUCATION -> {
+                            String[] urls = request.getParameterValues(type.name() + "url");
+                            List<Organization> organizations = new ArrayList<>();
+                            for (int i = 0; i < orgs.length; i++) {
+                                if (!orgs[i].equals("")) {
+                                    String[] beginDates = request.getParameterValues(i + type.name() + "beginDate");
+                                    String[] finishDates = request.getParameterValues(i + type.name() + "finishDate");
+                                    String[] titles = request.getParameterValues(i + type.name() + "title");
+                                    String[] descriptions = request.getParameterValues(i + type.name() + "description");
+                                    List<Organization.Position> positions = new ArrayList<>();
+                                    for (int j = 0; j < titles.length; j++) {
+                                        if (!titles[j].equals("")) {
+                                            positions.add(new Organization.Position(DateUtil.parse(beginDates[j]), DateUtil.parse(finishDates[j]), titles[j], descriptions[j]));
+                                        }
+                                    }
+                                    organizations.add(new Organization(orgs[i], urls[i], positions.toArray(new Organization.Position[0])));
+                                }
+                            }
+                            resume.addSection(type, new OrganizationSection(organizations));
+                        }
                     }
-                } else {
-                    resume.getSections().remove(type);
                 }
             }
             if (isResumeNew) storage.save(resume);
@@ -85,7 +110,7 @@ public class ResumeServlet extends HttpServlet {
                 r = storage.get(uuid);
                 break;
             case "add":
-                r = new Resume(UUID.randomUUID().toString(),"");
+                r = new Resume(UUID.randomUUID().toString(), "");
                 break;
             default:
                 throw new IllegalArgumentException("Action " + action + " is illegal");
